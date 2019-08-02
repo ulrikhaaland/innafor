@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "359719385680",
+    "firebase_url": "https://innafor-f4e41.firebaseio.com",
+    "project_id": "innafor-f4e41",
+    "storage_bucket": "innafor-f4e41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359719385680:android:c5e15e384e2e27b0",
+        "android_client_info": {
+          "package_name": "com.example.innafor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "359719385680-0uqekj3rseh5455di52m72s8rojbdbms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.innafor",
+            "certificate_hash": "c01d73a47907b533d2f3f07c7be9562e558003c8"
+          }
+        },
+        {
+          "client_id": "359719385680-on4jhdbg7t5gl66d00pr5pldlgpoa524.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOSjJ4hBvbQpXXgVcIZSPdDQlGFDXz4GI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "359719385680-on4jhdbg7t5gl66d00pr5pldlgpoa524.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "359719385680-ai7r9r7vm20h2qprvj76ln5n5fj3hfdl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.innafor"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

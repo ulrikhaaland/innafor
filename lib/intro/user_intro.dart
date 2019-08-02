@@ -40,14 +40,14 @@ class UserIntro extends BaseView {
   Widget build(BuildContext context) {
     List<Widget> list = [
       introPage(
-          "lib/assets/images/sim1.png",
+          null,
           "Bruk søkefeltet for å finne frem til det du leter etter, klikk deretter på ønsket ekspert.",
           1),
       introPage(
-          "lib/assets/images/sim2.png",
+          null,
           "Vurder om eksperten passer for deg, hvis så trykk på pluss knappen",
           2),
-      introPage("lib/assets/images/sim3.png",
+      introPage(null,
           "Forklar hva din henvendelse gjelder og send til eksperten.", 3),
       // userInfo(),
     ];

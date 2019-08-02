@@ -31,7 +31,7 @@ class _IntroState extends State<Intro> {
         child: Text(
           "HENVEND",
           style: TextStyle(
-              fontFamily: "Asap",
+              fontFamily: "Montserrat",
               color: ServiceProvider
                   .instance.instanceStyleService.appStyle.lightYellow,
               fontSize: 50),

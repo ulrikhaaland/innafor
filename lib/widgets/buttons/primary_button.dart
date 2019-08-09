@@ -66,7 +66,7 @@ class PrimaryButton extends BaseView {
               ),
             ),
             color: controller.color ??
-                ServiceProvider.instance.instanceStyleService.appStyle.sunGlow,
+                ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
             textColor: Colors.black,
             elevation: 0,
             onPressed: controller.onPressed),

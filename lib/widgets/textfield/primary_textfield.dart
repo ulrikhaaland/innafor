@@ -73,7 +73,7 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
         cursorRadius: Radius.circular(1),
         keyboardType: widget.textInputType ?? TextInputType.text,
         cursorColor: widget.cursorColor ??
-            ServiceProvider.instance.instanceStyleService.appStyle.sunGlow,
+            ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
         style: widget.style ??
             ServiceProvider.instance.instanceStyleService.appStyle.body1Black,
         validator: widget.validate == null
@@ -94,12 +94,12 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
           enabledBorder: new UnderlineInputBorder(
               borderSide: new BorderSide(
             color:
-                ServiceProvider.instance.instanceStyleService.appStyle.sunGlow,
+                ServiceProvider.instance.instanceStyleService.appStyle.imperial,
           )),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: ServiceProvider
-                  .instance.instanceStyleService.appStyle.sunGlow,
+                  .instance.instanceStyleService.appStyle.imperial,
             ),
           ),
         ),

@@ -67,7 +67,7 @@ class Test extends MasterPage {
     }
     return Scaffold(
       backgroundColor:
-          ServiceProvider.instance.instanceStyleService.appStyle.caribbeanGreen,
+          ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
     );
   }
 }

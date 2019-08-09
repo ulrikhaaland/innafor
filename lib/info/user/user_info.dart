@@ -93,7 +93,7 @@ class UserInfo extends BaseView {
               radius: ServiceProvider.instance.screenService
                   .getHeightByPercentage(context, 8.5),
               backgroundColor: ServiceProvider
-                  .instance.instanceStyleService.appStyle.sunGlow,
+                  .instance.instanceStyleService.appStyle.imperial,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

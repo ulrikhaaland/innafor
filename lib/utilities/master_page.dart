@@ -208,7 +208,7 @@ abstract class MasterPage extends BaseView {
                       width: ServiceProvider.instance.screenService
                           .getWidthByPercentage(context, 25.0),
                       color: ServiceProvider
-                          .instance.instanceStyleService.appStyle.lightYellow,
+                          .instance.instanceStyleService.appStyle.mimiPink,
                     )
                   : Container(),
             ],
@@ -350,9 +350,7 @@ class BambooAppBar extends BaseView {
 
     return _buildContainer(
       context,
-      controller.searchActivated
-          ? _buildSearch(context)
-          : _buildContent(context),
+      _buildContent(context),
     );
   }
 
@@ -379,7 +377,7 @@ class BambooAppBar extends BaseView {
                     spreadRadius: getDefaultPadding(context) * 0.15,
                     blurRadius: getDefaultPadding(context) * 0.5,
                     color: ServiceProvider
-                        .instance.instanceStyleService.appStyle.lightYellow,
+                        .instance.instanceStyleService.appStyle.mimiPink,
                     offset: Offset(
                       getDefaultPadding(context) * 0.5,
                       getDefaultPadding(context) * 0.5,
@@ -451,12 +449,7 @@ class BambooAppBar extends BaseView {
               right: getDefaultPadding(context),
             ),
             child: Text(
-              controller.searchBarManager != null
-                  ? (controller.searchBarManager.currentSearch == null ||
-                          controller.searchBarManager.currentSearch.isEmpty
-                      ? "Somethingsumthin"
-                      : controller.searchBarManager.currentSearch)
-                  : controller.title,
+              controller.title,
               style: ServiceProvider
                   .instance.instanceStyleService.appStyle.labelLight
                   .copyWith(
@@ -478,185 +471,6 @@ class BambooAppBar extends BaseView {
 
     return Row(
       children: widgets,
-    );
-  }
-
-  Widget _buildSearch(BuildContext context) {
-    final String searchHint = "Search hint";
-
-    return Row(
-      children: <Widget>[
-        IconButton(
-          onPressed: () {
-            controller.setState(() => controller.searchActivated = false);
-          },
-          iconSize: getAppBarIconSize(context),
-          color:
-              ServiceProvider.instance.instanceStyleService.appStyle.themeColor,
-          icon: Icon(Icons.close),
-        ),
-
-        /// Add a fake button (invisible) so that the search text/hint
-        /// starts on the same position as the initiator does
-        IconButton(
-          onPressed: () {
-            controller.setState(() => controller.searchActivated = false);
-          },
-          iconSize: getAppBarIconSize(context),
-          color: Colors.transparent,
-          icon: Icon(Icons.menu),
-        ),
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.only(
-              left: getDefaultPadding(context),
-              right: getDefaultPadding(context),
-            ),
-            child: _SearchBar(
-              searchBarManager: controller.searchBarManager,
-              searchTriggered: () =>
-                  controller.setState(() => controller.searchActivated = false),
-              searchHint: searchHint,
-            ),
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            controller.searchBarManager
-                .searchTriggered(controller.searchBarManager.currentSearch);
-          },
-          iconSize: getAppBarIconSize(context),
-          color:
-              ServiceProvider.instance.instanceStyleService.appStyle.themeColor,
-          icon: Icon(Icons.search),
-        ),
-      ],
-    );
-  }
-}
-
-class _SearchBar extends StatefulWidget {
-  final LinkedSearchBarManager searchBarManager;
-
-  final VoidCallback searchTriggered;
-
-  final String searchHint;
-
-  _SearchBar({
-    Key key,
-    this.searchBarManager,
-    this.searchTriggered,
-    this.searchHint,
-  }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<_SearchBar> {
-  final TextEditingController textEditingController =
-      new TextEditingController();
-
-  final FocusNode _focusNode = new FocusNode();
-
-  TextSelection cursorPosition;
-
-  @override
-  void initState() {
-    _focusNode.addListener(() {
-      setState(() {
-        cursorPosition = textEditingController.selection;
-      });
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (_focusNode != null) {
-      _focusNode.dispose();
-    }
-
-    if (textEditingController != null) {
-      textEditingController.dispose();
-    }
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!mounted) {
-      return Container();
-    }
-
-    textEditingController.text = widget.searchBarManager.currentSearch ?? '';
-
-    if (cursorPosition != null &&
-        cursorPosition.end <= (textEditingController.text ?? "").length) {
-      textEditingController.selection = cursorPosition;
-    }
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: getDefaultPadding(context) * 0.2),
-      child: TextField(
-        focusNode: _focusNode,
-        autofocus: true,
-        autocorrect: false,
-        controller: textEditingController,
-        decoration: InputDecoration(
-          hintText: widget.searchHint ?? "",
-          hintStyle: ServiceProvider
-              .instance.instanceStyleService.appStyle.labelLight
-              .copyWith(
-            fontSize: ServiceProvider
-                    .instance.instanceStyleService.appStyle.label.fontSize *
-                1.2,
-            fontStyle: FontStyle.italic,
-          ),
-          suffixIcon: textEditingController.text != ""
-              ? GestureDetector(
-                  onTap: () {
-                    widget.searchBarManager.currentSearchRemoved();
-
-                    if (widget.searchTriggered != null) {
-                      widget.searchTriggered();
-                    }
-                  },
-                  child: Icon(
-                    Icons.clear,
-                    size: getAppBarIconSize(context) * 0.8,
-                    color: ServiceProvider.instance.instanceStyleService
-                        .appStyle.inactiveIconColor,
-                  ),
-                )
-              : null,
-        ),
-        onChanged: (s) {
-          widget.searchBarManager.currentSearch = s;
-
-          setState(() {
-            cursorPosition = textEditingController.selection;
-          });
-        },
-        onSubmitted: (s) {
-          widget.searchBarManager.currentSearch = s;
-
-          widget.searchBarManager.searchTriggered(s);
-
-          if (widget.searchTriggered != null) {
-            widget.searchTriggered();
-          }
-        },
-        maxLines: 1,
-        style: ServiceProvider.instance.instanceStyleService.appStyle.labelLight
-            .copyWith(
-          fontSize: ServiceProvider
-                  .instance.instanceStyleService.appStyle.label.fontSize *
-              1.2,
-        ),
-      ),
     );
   }
 }

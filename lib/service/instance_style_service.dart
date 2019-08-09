@@ -37,22 +37,24 @@ class InstanceStyleService {
   void setStandardStyle(double screenHeight, double factor) {
     print('InstanceStyleService: setStandardStyle');
 
-    _appStyle.backgroundColor = new Color.fromARGB(255, 240, 240, 240);
+    _appStyle.backgroundColor = new Color.fromARGB(255, 255, 255, 255);
 
-    _appStyle.lightYellow = new Color.fromARGB(255, 248, 255, 229);
-    _appStyle.caribbeanGreen = new Color.fromARGB(255, 6, 214, 160);
-    _appStyle.lightSeaGreen = new Color.fromARGB(255, 27, 154, 170);
-    _appStyle.infraRed = new Color.fromARGB(255, 239, 71, 111);
-    _appStyle.sunGlow = new Color.fromARGB(255, 255, 196, 61);
+    _appStyle.mimiPink = new Color.fromARGB(255, 242, 215, 238);
+    _appStyle.paleSilver = new Color.fromARGB(255, 211, 188, 192);
+    _appStyle.mountbattenPink = new Color.fromARGB(255, 165, 102, 139);
+    _appStyle.imperial = new Color.fromARGB(255, 105, 48, 109);
+    _appStyle.maastrichtBlue = new Color.fromARGB(255, 14, 16, 61);
+    _appStyle.leBleu = new Color.fromARGB(255, 122, 149, 241);
     _appStyle.textGrey = new Color.fromARGB(255, 92, 107, 115);
     _appStyle.card = new Color.fromARGB(255, 255, 222, 166);
+    _appStyle.titleOneColor = Colors.black;
 
     _appStyle.title = new TextStyle(
       fontSize: screenHeight * 0.040 * factor,
-      fontFamily: 'Asap',
+      fontFamily: 'Montserrat',
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
-      color: _appStyle.lightYellow,
+      color: _appStyle.titleOneColor,
     );
 
     _appStyle.secondaryTitle = new TextStyle(
@@ -73,8 +75,8 @@ class InstanceStyleService {
 
     _appStyle.titleGrey = new TextStyle(
         fontSize: screenHeight * 0.040 * factor,
-        fontFamily: 'Asap',
-        fontWeight: FontWeight.bold,
+        fontFamily: 'Montserrat',
+        // fontWeight: FontWeight.bold,
         fontStyle: FontStyle.normal,
         color: _appStyle.textGrey);
 
@@ -91,7 +93,7 @@ class InstanceStyleService {
       fontSize: screenHeight * 0.020 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
-      color: _appStyle.caribbeanGreen,
+      color: _appStyle.mountbattenPink,
     );
 
     _appStyle.cancel = new TextStyle(
@@ -99,7 +101,7 @@ class InstanceStyleService {
       fontSize: screenHeight * 0.020 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
-      color: _appStyle.infraRed,
+      color: _appStyle.imperial,
     );
 
     _appStyle.body1Black = new TextStyle(
@@ -156,38 +158,45 @@ class InstanceStyleService {
       fontSize: screenHeight * 0.025 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.italic,
-      color: _appStyle.lightYellow,
+      color: _appStyle.mimiPink,
     );
 
     _appStyle.label = new TextStyle(
       fontSize: screenHeight * 0.025 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.italic,
-      color: _appStyle.lightYellow,
+      color: _appStyle.mimiPink,
     );
 
     _appStyle.labelLight = new TextStyle(
       fontSize: screenHeight * 0.025 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.italic,
-      color: _appStyle.lightYellow,
+      color: _appStyle.mimiPink,
+    );
+
+    _appStyle.iconFloatText = new TextStyle(
+      fontSize: screenHeight * 0.025 * factor,
+      fontFamily: "Montserrat",
+      fontWeight: FontWeight.bold,
+      color: _appStyle.imperial,
     );
 
     _appStyle.buttonText = new TextStyle(
-      fontFamily: "Asap",
-      fontSize: screenHeight * 0.025 * factor,
+      fontFamily: "Montserrat",
+      fontSize: screenHeight * 0.023 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.italic,
-      color: _appStyle.lightYellow,
+      color: _appStyle.mountbattenPink,
     );
 
     _appStyle.iconSizeStandard = screenHeight * 0.041 * factor;
 
     _appStyle.iconSizeBig = screenHeight * 0.051 * factor;
 
-    _appStyle.activeIconColor = _appStyle.sunGlow;
+    _appStyle.activeIconColor = _appStyle.mountbattenPink;
 
-    _appStyle.inactiveIconColor = _appStyle.textGrey;
+    _appStyle.inactiveIconColor = _appStyle.paleSilver;
 
     _defaultAppStyle = _appStyle;
 

@@ -128,21 +128,23 @@ class RootPage extends BaseView {
           controller.refresh();
         },
       );
-    } else if (controller._firebaseUser == null) {
-      return LoginPage(
-        auth: controller._auth,
-        userFound: () => controller._getUser(),
-      );
-    } else if (controller._userIntro) {
-      return UserIntro(
-        controller: UserIntroController(
-            onIntroFinished: () {
-              controller._userIntro = false;
-              controller.refresh();
-            },
-            user: controller._user),
-      );
-    } else {
+    }
+    // else if (controller._firebaseUser == null) {
+    //   return LoginPage(
+    //     auth: controller._auth,
+    //     userFound: () => controller._getUser(),
+    //   );
+    // } else if (controller._userIntro) {
+    //   return UserIntro(
+    //     controller: UserIntroController(
+    //         onIntroFinished: () {
+    //           controller._userIntro = false;
+    //           controller.refresh();
+    //         },
+    //         user: controller._user),
+    //   );
+    // }
+    else {
       return HomePage(
         controller: HomePageController(
           auth: controller._auth,

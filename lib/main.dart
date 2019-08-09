@@ -1,3 +1,4 @@
+import 'package:bss/post/post.dart';
 import 'package:bss/root_page.dart';
 import 'package:bss/test.dart';
 
@@ -36,6 +37,7 @@ class _AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+        // brightness: Brightness.light,
         primarySwatch: Colors.grey,
       ),
       home: RootPage(
@@ -47,6 +49,9 @@ class _AppState extends State<App> {
             ),
         "/home": (BuildContext c) => RootPage(
               controller: widget._rootController,
+            ),
+        "/post": (BuildContext c) => Post(
+              controller: PostController(),
             ),
       },
     );

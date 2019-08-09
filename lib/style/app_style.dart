@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 class AppStyle {
   AppStyle(
       {this.title,
+      this.titleOneColor,
       this.themeColor,
       this.backgroundColor,
-      this.caribbeanGreen,
+      this.mimiPink,
+      this.paleSilver,
+      this.mountbattenPink,
+      this.imperial,
+      this.maastrichtBlue,
+      this.leBleu,
       this.textGrey,
-      this.infraRed,
-      this.lightSeaGreen,
-      this.sunGlow,
-      this.lightYellow,
       this.head1,
       this.head2,
       this.head3,
@@ -42,14 +44,17 @@ class AppStyle {
   Color themeColor;
   Color backgroundColor;
 
-  Color lightYellow;
-  Color caribbeanGreen;
-  Color lightSeaGreen;
-  Color infraRed;
-  Color sunGlow;
+  Color mimiPink;
+  Color paleSilver;
+  Color mountbattenPink;
+  Color imperial;
+  Color maastrichtBlue;
+  Color leBleu;
   Color textGrey;
+  Color titleOneColor;
   Color card;
 
+  TextStyle iconFloatText;
   TextStyle italic;
   TextStyle cancel;
   TextStyle confirm;

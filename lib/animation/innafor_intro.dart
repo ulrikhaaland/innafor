@@ -23,17 +23,17 @@ class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          ServiceProvider.instance.instanceStyleService.appStyle.caribbeanGreen,
+      backgroundColor: ServiceProvider
+          .instance.instanceStyleService.appStyle.backgroundColor,
       body: Center(
           child: ShowUp(
         delay: _delay,
         child: Text(
-          "HENVEND",
+          "Innafor",
           style: TextStyle(
               fontFamily: "Montserrat",
               color: ServiceProvider
-                  .instance.instanceStyleService.appStyle.lightYellow,
+                  .instance.instanceStyleService.appStyle.mountbattenPink,
               fontSize: 50),
         ),
       )),

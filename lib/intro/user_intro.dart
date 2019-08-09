@@ -89,7 +89,7 @@ class UserIntro extends BaseView {
                 onTap: () => _groupDecision(1),
                 child: Card(
                   color: ServiceProvider
-                      .instance.instanceStyleService.appStyle.lightSeaGreen,
+                      .instance.instanceStyleService.appStyle.paleSilver,
                   child: Container(
                     width: ServiceProvider.instance.screenService
                         .getWidthByPercentage(context, 85),
@@ -119,7 +119,7 @@ class UserIntro extends BaseView {
                 onTap: () => _groupDecision(2),
                 child: Card(
                   color: ServiceProvider
-                      .instance.instanceStyleService.appStyle.sunGlow,
+                      .instance.instanceStyleService.appStyle.imperial,
                   child: Container(
                     width: ServiceProvider.instance.screenService
                         .getWidthByPercentage(context, 85),
@@ -148,7 +148,7 @@ class UserIntro extends BaseView {
         backgroundColor: controller._contentType == ContentType.intro ||
                 controller._contentType == ContentType.choices
             ? ServiceProvider
-                .instance.instanceStyleService.appStyle.caribbeanGreen
+                .instance.instanceStyleService.appStyle.mountbattenPink
             : Colors.white,
         body: content);
   }
@@ -177,14 +177,17 @@ class UserIntro extends BaseView {
 
     switch (pos) {
       case 1:
-        one = ServiceProvider.instance.instanceStyleService.appStyle.sunGlow;
+        one = ServiceProvider
+            .instance.instanceStyleService.appStyle.maastrichtBlue;
 
         break;
       case 2:
-        two = ServiceProvider.instance.instanceStyleService.appStyle.sunGlow;
+        two = ServiceProvider
+            .instance.instanceStyleService.appStyle.maastrichtBlue;
         break;
       case 3:
-        three = ServiceProvider.instance.instanceStyleService.appStyle.sunGlow;
+        three = ServiceProvider
+            .instance.instanceStyleService.appStyle.maastrichtBlue;
     }
     return Column(
       children: <Widget>[

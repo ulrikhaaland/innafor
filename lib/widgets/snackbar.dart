@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 showSnackBar(String message, BuildContext context) {
   Scaffold.of(context).showSnackBar(new SnackBar(
       backgroundColor:
-          ServiceProvider.instance.instanceStyleService.appStyle.caribbeanGreen,
+          ServiceProvider.instance.instanceStyleService.appStyle.maastrichtBlue,
       content: Container(
         height: ServiceProvider.instance.screenService
             .getHeightByPercentage(context, 10),

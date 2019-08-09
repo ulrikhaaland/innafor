@@ -37,8 +37,7 @@ class SecondaryButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0))),
             color: color ??
-                ServiceProvider
-                    .instance.instanceStyleService.appStyle.caribbeanGreen,
+                ServiceProvider.instance.instanceStyleService.appStyle.imperial,
             textColor: Colors.black,
             elevation: 0,
             onPressed: onPressed),

@@ -12,10 +12,10 @@ class CPI extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget cpi = CircularProgressIndicator(
       strokeWidth: 3,
-      backgroundColor:
-          ServiceProvider.instance.instanceStyleService.appStyle.caribbeanGreen,
-      valueColor: AlwaysStoppedAnimation<Color>(
-          ServiceProvider.instance.instanceStyleService.appStyle.lightYellow),
+      backgroundColor: ServiceProvider
+          .instance.instanceStyleService.appStyle.backgroundColor,
+      valueColor: AlwaysStoppedAnimation<Color>(ServiceProvider
+          .instance.instanceStyleService.appStyle.maastrichtBlue),
     );
     // Center CPI
     return positioned

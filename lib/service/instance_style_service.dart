@@ -54,7 +54,7 @@ class InstanceStyleService {
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
-      color: _appStyle.titleOneColor,
+      color: Colors.white,
     );
 
     _appStyle.secondaryTitle = new TextStyle(
@@ -81,11 +81,11 @@ class InstanceStyleService {
         color: _appStyle.textGrey);
 
     _appStyle.body1 = new TextStyle(
-      fontFamily: "Asap",
+      fontFamily: "Montserrat",
       fontSize: screenHeight * 0.020 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
-      color: _appStyle.textGrey,
+      color: Colors.white,
     );
 
     _appStyle.confirm = new TextStyle(
@@ -185,9 +185,9 @@ class InstanceStyleService {
     _appStyle.buttonText = new TextStyle(
       fontFamily: "Montserrat",
       fontSize: screenHeight * 0.023 * factor,
-      fontWeight: FontWeight.normal,
-      fontStyle: FontStyle.italic,
-      color: _appStyle.mountbattenPink,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+      color: appStyle.maastrichtBlue,
     );
 
     _appStyle.iconSizeStandard = screenHeight * 0.041 * factor;

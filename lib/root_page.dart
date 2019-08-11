@@ -1,11 +1,11 @@
 import 'dart:math';
 
+import 'package:bss/post/post_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'animation/innafor_intro.dart';
 import 'auth.dart';
-import 'home/home_page.dart';
 import 'intro/user_intro.dart';
 import 'login/login_page.dart';
 import 'objects/user.dart';
@@ -145,8 +145,8 @@ class RootPage extends BaseView {
     //   );
     // }
     else {
-      return HomePage(
-        controller: HomePageController(
+      return PostPage(
+        controller: PostPageController(
           auth: controller._auth,
         ),
       );

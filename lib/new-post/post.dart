@@ -12,12 +12,14 @@ import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-class PostController extends BaseController {}
+class NewPostController extends BaseController {}
 
-class Post extends BaseView {
-  final PostController controller;
+class NewPost extends BaseView {
+  final NewPostController controller;
 
   File _imageFile;
+
+  NewPost({this.controller});
 
   /// Cropper plugin
   Future<void> _cropImage() async {
@@ -92,7 +94,6 @@ class Post extends BaseView {
     );
   }
 
-  Post({this.controller});
   @override
   Widget buildContentLandscape(
       BuildContext context, ScreenSizeDefinition screenSizeDefinition) {

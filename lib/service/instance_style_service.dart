@@ -190,6 +190,8 @@ class InstanceStyleService {
       color: appStyle.maastrichtBlue,
     );
 
+    _appStyle.iconSizeSmall = screenHeight * 0.031 * factor;
+
     _appStyle.iconSizeStandard = screenHeight * 0.041 * factor;
 
     _appStyle.iconSizeBig = screenHeight * 0.051 * factor;

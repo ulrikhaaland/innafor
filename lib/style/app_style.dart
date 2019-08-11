@@ -28,6 +28,7 @@ class AppStyle {
       this.keyLabel,
       this.inactiveIconColor,
       this.activeIconColor,
+      this.iconSizeSmall,
       this.iconSizeStandard,
       this.iconSizeBig,
       this.textFieldLabel,
@@ -82,6 +83,7 @@ class AppStyle {
   TextStyle keyLabel;
   Color inactiveIconColor;
   Color activeIconColor;
+  double iconSizeSmall;
   double iconSizeStandard;
   double iconSizeBig;
 }

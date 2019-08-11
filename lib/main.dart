@@ -1,4 +1,4 @@
-import 'package:bss/post/post.dart';
+import 'package:bss/objects/post.dart';
 import 'package:bss/root_page.dart';
 import 'package:bss/test.dart';
 
@@ -9,6 +9,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import './service/service_provider.dart';
 import './service/screen_service.dart';
+import 'new-post/post.dart';
 
 void main() {
   ServiceProvider.instance.screenService = ScreenService();
@@ -50,8 +51,8 @@ class _AppState extends State<App> {
         "/home": (BuildContext c) => RootPage(
               controller: widget._rootController,
             ),
-        "/post": (BuildContext c) => Post(
-              controller: PostController(),
+        "/post": (BuildContext c) => NewPost(
+              controller: NewPostController(),
             ),
       },
     );

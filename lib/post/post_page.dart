@@ -4,7 +4,7 @@ import 'package:bss/objects/post.dart';
 import 'package:bss/auth.dart';
 import 'package:bss/base_controller.dart';
 import 'package:bss/base_view.dart';
-import 'package:bss/post/post_image.dart';
+import 'package:bss/post/post-image/post_image_container.dart';
 import 'package:bss/widgets/circular_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -77,8 +77,8 @@ class PostPage extends BaseView {
             controller: InnaforAppBarController(),
           ),
           controller.thePost != null
-              ? PostImage(
-                  controller: PostImageController(
+              ? PostImageContainer(
+                  controller: PostImageContainerController(
                     thePost: controller.thePost,
                   ),
                 )

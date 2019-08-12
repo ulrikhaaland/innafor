@@ -13,7 +13,6 @@ import '../../helper.dart';
 
 class PostImageContainerController extends BaseController {
   final Post thePost;
-  GlobalKey imageSizeKey = GlobalKey();
 
   var url;
 
@@ -21,19 +20,26 @@ class PostImageContainerController extends BaseController {
 
   bool loaded = false;
 
-  List<AdvancedNetworkImage> imageList = <AdvancedNetworkImage>[];
+  List<AdvancedNetworkImage> imageList;
 
   double imageWidth;
+  double imageHeight;
+
+  PostImageController postImageController;
+
+  PostContainerController postContainerController;
 
   PostImageContainerController({this.thePost});
 
   @override
   void initState() {
     getImages();
+
     super.initState();
   }
 
   void getImages() {
+    imageList = <AdvancedNetworkImage>[];
     for (int i = 0; i < thePost.imgUrlList.length; i++) {
       if (i == 0) {
         imageList.add(AdvancedNetworkImage(
@@ -41,8 +47,8 @@ class PostImageContainerController extends BaseController {
           loadedCallback: () {
             loaded = true;
             Timer(Duration(milliseconds: 50), () {
-              getImageWidth();
-              refresh();
+              postImageController.getImageWidth();
+              postImageController.refresh();
             });
           },
         ));
@@ -50,14 +56,15 @@ class PostImageContainerController extends BaseController {
         imageList.add(AdvancedNetworkImage(thePost.imgUrlList[i]));
       }
     }
-  }
-
-  void getImageWidth() {
-    final RenderBox renderBoxRed =
-        imageSizeKey.currentContext.findRenderObject();
-    final sizeRed = renderBoxRed.size;
-    print(sizeRed.width);
-    imageWidth = sizeRed.width;
+    postImageController = PostImageController(
+        imageList: imageList,
+        returnImageWidth: (width) {
+          postContainerController = PostContainerController(
+            thePost: thePost,
+            imageWidth: width,
+          );
+          refresh();
+        });
     refresh();
   }
 }
@@ -66,24 +73,18 @@ class PostImageContainer extends BaseView {
   final PostImageContainerController controller;
 
   PostImageContainer({this.controller});
+
   @override
   Widget build(BuildContext context) {
     return Flexible(
       fit: FlexFit.loose,
       child: Stack(
         children: <Widget>[
-          PostImage(
-            controller: PostImageController(
-              imageList: controller.imageList,
-              imageSizeKey: controller.imageSizeKey,
-            ),
-          ),
-          controller.imageWidth != null
-              ? PostContainer(
-                  controller: PostContainerController(
-                      thePost: controller.thePost,
-                      imageWidth: controller.imageWidth),
-                )
+          controller.imageList != null
+              ? PostImage(controller: controller.postImageController)
+              : Container(),
+          controller.postContainerController != null
+              ? PostContainer(controller: controller.postContainerController)
               : Container(),
         ],
       ),

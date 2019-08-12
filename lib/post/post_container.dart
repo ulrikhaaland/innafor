@@ -12,9 +12,14 @@ class PostContainerController extends BaseController {
 
   double imageWidth;
 
+  double imageHeight;
+
   bool expanded = false;
 
-  PostContainerController({this.thePost, this.imageWidth});
+  PostContainerController({
+    this.thePost,
+    this.imageWidth,
+  });
 }
 
 class PostContainer extends BaseView {

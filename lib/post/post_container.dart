@@ -25,7 +25,7 @@ class PostContainer extends BaseView {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      width: controller.imageWidth ?? 352.60851873884593,
+      width: controller.imageWidth ?? 38.60851873884593,
       bottom: ServiceProvider.instance.screenService
           .getHeightByPercentage(context, 1.5),
       child: Container(
@@ -36,7 +36,9 @@ class PostContainer extends BaseView {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
+            color: controller.expanded
+                ? Color.fromRGBO(0, 0, 0, 0.5)
+                : Color.fromRGBO(0, 0, 0, 0.1),
             borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
           child: Padding(
@@ -57,65 +59,105 @@ class PostContainer extends BaseView {
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        padding: EdgeInsets.only(
-                            left: getDefaultPadding(context) * 2),
-                        icon: controller.thePost.commentCount > 0
-                            ? Icon(
-                                controller.expanded
-                                    ? FontAwesomeIcons.minus
-                                    : FontAwesomeIcons.plus,
-                              )
-                            : Container(),
-                        color: Colors.white,
-                        iconSize: ServiceProvider.instance.instanceStyleService
-                            .appStyle.iconSizeSmall,
-                        onPressed: () {
-                          controller.expanded = !controller.expanded;
-                          controller.refresh();
-                        },
-                      ),
-                    ),
+                    controller.thePost.message.length > 120
+                        ? Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              padding: EdgeInsets.only(
+                                  left: getDefaultPadding(context) * 2),
+                              icon: controller.thePost.commentCount > 0
+                                  ? Icon(
+                                      controller.expanded
+                                          ? FontAwesomeIcons.minus
+                                          : FontAwesomeIcons.plus,
+                                    )
+                                  : Container(),
+                              color: Colors.white,
+                              iconSize: ServiceProvider.instance
+                                  .instanceStyleService.appStyle.iconSizeSmall,
+                              onPressed: () {
+                                controller.expanded = !controller.expanded;
+                                controller.refresh();
+                              },
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
-                Row(
+                Stack(
                   children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          if (controller.thePost.message.length > 120) ...[
-                            Text(
-                              controller.thePost.message.substring(0, 120) +
-                                  "...",
-                              style: ServiceProvider
-                                  .instance.instanceStyleService.appStyle.body1,
-                              overflow: TextOverflow.clip,
-                              textAlign: TextAlign.start,
-                            ),
-                          ] else ...[
-                            Text(
-                              controller.thePost.message,
-                              style: ServiceProvider
-                                  .instance.instanceStyleService.appStyle.body1,
-                              overflow: TextOverflow.clip,
-                              textAlign: TextAlign.start,
-                            ),
-                          ],
-                        ],
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              if (controller.thePost.message.length > 120 &&
+                                  !controller.expanded) ...[
+                                Text(
+                                  controller.thePost.message.substring(0, 120) +
+                                      "...",
+                                  style: ServiceProvider.instance
+                                      .instanceStyleService.appStyle.body1,
+                                  overflow: TextOverflow.clip,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ] else if (controller.expanded) ...[
+                                Container(
+                                  height: ServiceProvider.instance.screenService
+                                      .getHeightByPercentage(context, 45),
+                                  child: MediaQuery.removePadding(
+                                    context: context,
+                                    removeTop: true,
+                                    child: Scrollbar(
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: 1,
+                                        itemBuilder: (context, index) => Text(
+                                          controller.thePost.message,
+                                          style: ServiceProvider
+                                              .instance
+                                              .instanceStyleService
+                                              .appStyle
+                                              .body1,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        Container(),
+                        IconButton(
+                          alignment: Alignment.bottomCenter,
+                          padding: EdgeInsets.only(
+                            left: getDefaultPadding(context) * 2,
+                          ),
+                          icon: Icon(FontAwesomeIcons.solidUser),
+                          iconSize: ServiceProvider.instance
+                              .instanceStyleService.appStyle.iconSizeSmall,
+                          color: Colors.transparent,
+                          onPressed: () => null,
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      padding: EdgeInsets.only(
-                        left: getDefaultPadding(context) * 2,
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        alignment: Alignment.bottomCenter,
+                        padding: EdgeInsets.only(
+                          left: getDefaultPadding(context) * 2,
+                        ),
+                        icon: Icon(FontAwesomeIcons.solidUser),
+                        iconSize: ServiceProvider.instance.instanceStyleService
+                            .appStyle.iconSizeSmall,
+                        color: Colors.white,
+                        onPressed: () => null,
                       ),
-                      icon: Icon(FontAwesomeIcons.solidUser),
-                      iconSize: ServiceProvider
-                          .instance.instanceStyleService.appStyle.iconSizeSmall,
-                      color: Colors.white,
-                      onPressed: () => null,
                     ),
                   ],
                 ),

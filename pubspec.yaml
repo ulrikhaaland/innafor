@@ -43,6 +43,7 @@ dependencies:
   flutter_rating_bar: ^2.0.0
   font_awesome_flutter: ^8.5.0
   flutter_advanced_networkimage: ^0.5.0
+  # vibration: 1.2.1
 
 dev_dependencies:
   flutter_test:

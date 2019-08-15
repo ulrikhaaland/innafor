@@ -14,8 +14,8 @@ class CPI extends StatelessWidget {
       strokeWidth: 3,
       backgroundColor: ServiceProvider
           .instance.instanceStyleService.appStyle.backgroundColor,
-      valueColor: AlwaysStoppedAnimation<Color>(ServiceProvider
-          .instance.instanceStyleService.appStyle.maastrichtBlue),
+      valueColor: AlwaysStoppedAnimation<Color>(
+          ServiceProvider.instance.instanceStyleService.appStyle.leBleu),
     );
     // Center CPI
     return positioned

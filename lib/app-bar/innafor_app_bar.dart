@@ -1,13 +1,17 @@
+import 'package:bss/auth.dart';
 import 'package:bss/base_controller.dart';
 import 'package:bss/base_view.dart';
 import 'package:bss/service/service_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../helper.dart';
 
-class InnaforAppBarController extends BaseController {}
+class InnaforAppBarController extends BaseController {
+  final BaseAuth auth;
+
+  InnaforAppBarController({this.auth});
+}
 
 class InnaforAppBar extends BaseView {
   final InnaforAppBarController controller;
@@ -32,7 +36,7 @@ class InnaforAppBar extends BaseView {
                       color: ServiceProvider.instance.instanceStyleService
                           .appStyle.inactiveIconColor,
                     ),
-                    onPressed: () => null),
+                    onPressed: () => controller.auth.signOut()),
                 // Expanded(
                 //   child: Container(
                 //     height: ServiceProvider.instance.screenService

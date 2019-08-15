@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:bss/post/post_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'animation/innafor_intro.dart';
 import 'auth.dart';
-import 'intro/user_intro.dart';
 import 'login/login_page.dart';
 import 'objects/user.dart';
 import 'service/service_provider.dart';
@@ -31,49 +28,57 @@ class RootPageController extends BaseController {
 
   User _user;
   bool introDone = false;
-  bool _userIntro = true;
 
-  void _getUser() async {
-    // _firebaseUser = await _auth.currentUser();
+  Future<Null> getUser() async {
+    _firebaseUser = await _auth.currentUser();
+    if (_firebaseUser != null) {
+      DocumentSnapshot docSnap =
+          await Firestore.instance.document("users/${_firebaseUser.uid}").get();
+      if (!docSnap.exists) {
+        _user = User(
+          email: _firebaseUser.email,
+          id: _firebaseUser.uid,
+          fcm: null,
+          bio: null,
+          profilePicURL: null,
+          appVersion: 1,
+          notifications: 0,
+        );
+        await Firestore.instance
+            .document("users/${_firebaseUser.uid}")
+            .setData(_user.toJson());
+      } else {
+        _user = User();
+        _user.fromJson(docSnap.data);
+      }
+      _updateFcmToken();
+    }
 
-    // DocumentSnapshot docSnap =
-    //     await Firestore.instance.document("users/${_firebaseUser.uid}").get();
-    // if (docSnap.exists) {
-    //   _userIntro = false;
-    // } else {
-    //   _userIntro = true;
-    //   Firestore.instance.document("users/${_firebaseUser.uid}").setData({
-    //     "id": _firebaseUser.uid,
-    //   });
-    // }
-    // _updateFcmToken();
-    _user = User(
-      id: Random().nextInt(3100).toString(),
-      userName: "",
-      email: "",
-      bio: "",
-      appVersion: 1,
-      expertId: [],
-    );
+    // _user = User(
+    //   id: Random().nextInt(3100).toString(),
+    //   userName: "",
+    //   email: "",
+    //   bio: "",
+    //   appVersion: 1,
+    //   expertId: [],
+    // );
     refresh();
+    return;
   }
 
   _updateFcmToken() async {
     var messagingToken = await firebaseMessaging.getToken();
     _user.fcm = messagingToken;
-    firestoreInstance.document("users/${_user.id}").get().then((doc) {
-      if (doc.data["fcm"] != messagingToken) {
-        firestoreInstance
-            .document("users/${_user.id}")
-            .updateData({"fcm": messagingToken});
-      }
-    });
+
+    firestoreInstance
+        .document("users/${_user.id}")
+        .updateData({"fcm": messagingToken});
   }
 
   @override
   void initState() {
     print('RootPage: initState');
-    _getUser();
+    getUser();
 
     super.initState();
   }
@@ -117,10 +122,6 @@ class RootPage extends BaseView {
       ServiceProvider.instance.screenService.getBambooFactor(context),
     );
 
-    // return Test(
-    //   controller: TestController(),
-    // );
-
     if (!controller.introDone) {
       return Intro(
         introDone: () {
@@ -128,23 +129,21 @@ class RootPage extends BaseView {
           controller.refresh();
         },
       );
-    }
-    // else if (controller._firebaseUser == null) {
-    //   return LoginPage(
-    //     auth: controller._auth,
-    //     userFound: () => controller._getUser(),
-    //   );
-    // } else if (controller._userIntro) {
-    //   return UserIntro(
-    //     controller: UserIntroController(
-    //         onIntroFinished: () {
-    //           controller._userIntro = false;
-    //           controller.refresh();
-    //         },
-    //         user: controller._user),
-    //   );
-    // }
-    else {
+    } else if (controller._firebaseUser == null) {
+      return LoginPage(
+        controller: LoginPageController(
+          rootPageController: controller,
+          auth: controller._auth,
+          returnUser: (returnUser) {
+            if (returnUser != null) {
+              controller._firebaseUser = returnUser;
+              controller.refresh();
+            }
+            return returnUser;
+          },
+        ),
+      );
+    } else {
       return PostPage(
         controller: PostPageController(
           auth: controller._auth,

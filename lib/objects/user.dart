@@ -1,17 +1,16 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class User {
-  List<String> expertId;
-  String userName;
-  final String id;
+  String name;
+  String id;
   String email;
   String fcm;
   String bio;
   String profilePicURL;
   double appVersion;
-  File image;
   int notifications;
   DateTime birthDate;
 
@@ -19,28 +18,36 @@ class User {
   User({
     this.email,
     this.id,
-    this.userName,
+    this.name,
     this.fcm,
     this.bio,
     this.profilePicURL,
     this.appVersion,
-    this.image,
     this.notifications,
-    this.birthDate,
-    this.expertId,
   });
+
+  fromJson(Map<String, dynamic> data) {
+    this.email = data["email"];
+    this.id = data["id"];
+    this.name = data["name"];
+    this.email = data["email"];
+    this.fcm = data["fcm"];
+    this.bio = data["bio"];
+    this.profilePicURL = data["profile_pic_url"];
+    this.appVersion = data["app_version"];
+    this.notifications = data["notifications"];
+  }
 
   Map<String, dynamic> toJson() {
     return {
       'id': this.id,
-      'name': this.userName,
+      'name': this.name,
       'email': this.email,
       'fcm': this.fcm,
       'bio': this.bio,
-      'profilepicurl': this.profilePicURL,
-      'appversion': this.appVersion,
+      'profile_pic_url': this.profilePicURL,
+      'app_version': this.appVersion,
       'notifications': this.notifications,
-      'expert_id': this.expertId,
     };
   }
 
@@ -60,10 +67,4 @@ class User {
 
     return;
   }
-
-  // Future<Null> _updateExperts() {
-  //   for (var item in expertList) {
-  //     Firestore.instance.document("users/$id/expert/${item.id}").updateData(item.)
-  //   }
-  // }
 }

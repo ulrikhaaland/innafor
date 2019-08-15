@@ -58,11 +58,11 @@ class InstanceStyleService {
     );
 
     _appStyle.secondaryTitle = new TextStyle(
-      fontSize: screenHeight * 0.030 * factor,
-      fontFamily: 'Asap',
+      fontSize: screenHeight * 0.040 * factor,
+      fontFamily: 'Montserrat',
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
-      color: _appStyle.textGrey,
+      color: Colors.black,
     );
 
     _appStyle.thirdTitle = new TextStyle(
@@ -105,9 +105,9 @@ class InstanceStyleService {
     );
 
     _appStyle.body1Black = new TextStyle(
-      fontFamily: "Asap",
+      fontFamily: "Montserrat",
       fontSize: screenHeight * 0.020 * factor,
-      fontWeight: FontWeight.normal,
+      fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
       color: Colors.black,
     );
@@ -165,7 +165,7 @@ class InstanceStyleService {
       fontSize: screenHeight * 0.025 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.italic,
-      color: _appStyle.mimiPink,
+      color: Colors.black,
     );
 
     _appStyle.labelLight = new TextStyle(
@@ -185,9 +185,9 @@ class InstanceStyleService {
     _appStyle.buttonText = new TextStyle(
       fontFamily: "Montserrat",
       fontSize: screenHeight * 0.023 * factor,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
-      color: appStyle.maastrichtBlue,
+      color: Colors.white,
     );
 
     _appStyle.iconSizeSmall = screenHeight * 0.031 * factor;

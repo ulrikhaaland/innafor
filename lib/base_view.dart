@@ -35,7 +35,8 @@ abstract class BaseView extends StatefulWidget {
 }
 
 /// The State Object
-class BaseState extends State<BaseView> with WidgetsBindingObserver {
+class BaseState extends State<BaseView>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   BaseState(
     this.view,
     this._controller,

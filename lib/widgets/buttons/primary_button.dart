@@ -56,17 +56,20 @@ class PrimaryButton extends BaseView {
         child: RaisedButton(
             child: controller.isLoading
                 ? CPI(false)
-                : Text(controller.text ?? "N/A",
+                : Text(
+                    controller.text ?? "N/A",
                     style: controller.textStyle ??
                         ServiceProvider
-                            .instance.instanceStyleService.appStyle.buttonText),
+                            .instance.instanceStyleService.appStyle.buttonText,
+                    overflow: TextOverflow.ellipsis,
+                  ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(controller.radius ?? 8.0),
               ),
             ),
             color: controller.color ??
-                ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
+                ServiceProvider.instance.instanceStyleService.appStyle.imperial,
             textColor: Colors.black,
             elevation: 0,
             onPressed: controller.onPressed),

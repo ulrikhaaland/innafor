@@ -1,3 +1,4 @@
+import 'package:bss/login/login_phone.dart';
 import 'package:bss/objects/post.dart';
 import 'package:bss/root_page.dart';
 import 'package:bss/test.dart';
@@ -54,6 +55,9 @@ class _AppState extends State<App> {
         "/post": (BuildContext c) => NewPost(
               controller: NewPostController(),
             ),
+        // "/phoneLogin": (BuildContext c) => PhoneLogin(
+        //       controller: PhoneLoginController(),
+        //     ),
       },
     );
   }

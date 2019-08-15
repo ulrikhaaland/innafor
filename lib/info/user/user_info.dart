@@ -158,8 +158,8 @@ class UserInfo extends BaseView {
           ),
           PrimaryTextField(
             focusNode: controller._nameNode,
-            initValue: controller.user.userName,
-            onSaved: (val) => controller.user.userName = val.trim(),
+            initValue: controller.user.name,
+            onSaved: (val) => controller.user.name = val.trim(),
             onFieldSubmitted: () => fieldFocusChange(
                 context, controller._nameNode, controller._emailNode),
             labelText: "Fullt navn",

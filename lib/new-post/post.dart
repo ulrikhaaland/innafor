@@ -11,15 +11,19 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 
-class NewPostController extends BaseController {}
-
-class NewPost extends BaseView {
-  final NewPostController controller;
+class NewPostController extends BaseController {
+  VideoPlayerController _videoController;
 
   File _imageFile;
 
-  NewPost({this.controller});
+  bool video = true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   /// Cropper plugin
   Future<void> _cropImage() async {
@@ -34,22 +38,40 @@ class NewPost extends BaseView {
         toolbarTitle: 'Crop It');
 
     _imageFile = cropped ?? _imageFile;
-    controller.refresh();
+    refresh();
   }
 
-  /// Select an image via gallery or camera
   Future<void> _pickImage(ImageSource source) async {
+    video = false;
     File selected = await ImagePicker.pickImage(source: source);
 
     _imageFile = selected;
-    controller.refresh();
+    refresh();
+  }
+
+  Future<void> _pickVideo(ImageSource source) async {
+    video = true;
+    File selected = await ImagePicker.pickVideo(source: source);
+
+    _imageFile = selected;
+    _videoController = VideoPlayerController.file(_imageFile);
+    _videoController.initialize();
+    refresh();
   }
 
   /// Remove image
   void _clear() {
     _imageFile = null;
-    controller.refresh();
+    refresh();
   }
+}
+
+class NewPost extends BaseView {
+  final NewPostController controller;
+
+  NewPost({this.controller});
+
+  /// Select an image via gallery or camera
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +82,15 @@ class NewPost extends BaseView {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.photo_camera),
-              onPressed: () => _pickImage(ImageSource.camera),
+              onPressed: () => controller._pickImage(ImageSource.camera),
             ),
             IconButton(
               icon: Icon(Icons.photo_library),
-              onPressed: () => _pickImage(ImageSource.gallery),
+              onPressed: () => controller._pickImage(ImageSource.gallery),
+            ),
+            IconButton(
+              icon: Icon(Icons.video_library),
+              onPressed: () => controller._pickVideo(ImageSource.gallery),
             ),
           ],
         ),
@@ -73,21 +99,29 @@ class NewPost extends BaseView {
       // Preview the image and crop it
       body: ListView(
         children: <Widget>[
-          if (_imageFile != null) ...[
-            Image.file(_imageFile),
+          if (controller._imageFile != null) ...[
+            controller.video
+                ? controller._videoController.value.initialized
+                    ? AspectRatio(
+                        aspectRatio:
+                            controller._videoController.value.aspectRatio,
+                        child: VideoPlayer(controller._videoController),
+                      )
+                    : Text("data")
+                : Image.file(controller._imageFile),
             Row(
               children: <Widget>[
                 FlatButton(
                   child: Icon(Icons.crop),
-                  onPressed: _cropImage,
+                  onPressed: controller._cropImage,
                 ),
                 FlatButton(
                   child: Icon(Icons.refresh),
-                  onPressed: _clear,
+                  onPressed: controller._clear,
                 ),
               ],
             ),
-            Uploader(file: _imageFile)
+            Uploader(file: controller._imageFile)
           ]
         ],
       ),
@@ -113,16 +147,4 @@ class NewPost extends BaseView {
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   ScreenSizeDefinition screenSizeDefinition =
-  //       ServiceProvider.instance.screenService.getScreenSizeDefinition(context);
-
-  //   if (screenSizeDefinition == ScreenSizeDefinition.big) {
-  //     return buildContentLandscape(context, screenSizeDefinition);
-  //   } else {
-  //     return buildContentPortrait(context, screenSizeDefinition);
-  //   }
-  // }
 }

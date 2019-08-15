@@ -1,10 +1,10 @@
 import 'package:bss/base_controller.dart';
 import 'package:bss/base_view.dart';
-import 'package:bss/post/post-image/post_image_tab_bar.dart';
 import 'package:bss/service/service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../helper.dart';
 
@@ -28,6 +28,11 @@ class PostImageController extends BaseController {
     this.imageWidth,
   });
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void getImageWidth() {
     final RenderBox renderBoxRed =
         imageSizeKey.currentContext.findRenderObject();
@@ -47,6 +52,23 @@ class PostImage extends BaseView {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> tabBarWidgets = <Widget>[];
+    for (int i = 0; i < controller.imageList.length; i++) {
+      double left = 2.5;
+      double right = 2.5;
+      if (i == 0) left = 5;
+      if (i == controller.imageList.length - 1) right = 5;
+      tabBarWidgets.add(Expanded(
+        child: Padding(
+          padding: EdgeInsets.only(left: left, right: right),
+          child: Container(
+            color: controller.imageIndex == i
+                ? Colors.white
+                : Color.fromRGBO(0, 0, 0, 0.25),
+          ),
+        ),
+      ));
+    }
     return Container(
       padding: EdgeInsets.only(
         left: getDefaultPadding(context) * 2,
@@ -99,11 +121,13 @@ class PostImage extends BaseView {
               ),
             ),
             Positioned(
-              top: 0,
+              top: ServiceProvider.instance.screenService
+                  .getHeightByPercentage(context, 1),
               child: Container(
-                child: PostImageTabBar(
-                  length: controller.imageList.length,
-                  imageWidth: controller.imageWidth,
+                height: 2.5,
+                width: controller.imageWidth,
+                child: Row(
+                  children: tabBarWidgets,
                 ),
               ),
             ),

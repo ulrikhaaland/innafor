@@ -20,6 +20,17 @@ double getAppBarIconSize(BuildContext context) {
 
 double _appBarIconSize;
 
+double getImageSize({GlobalKey key, bool width}) {
+  final RenderBox renderBoxRed = key.currentContext.findRenderObject();
+  final sizeRed = renderBoxRed.size;
+  print(sizeRed.width);
+  if (width) {
+    return sizeRed.width;
+  } else if (!width) {
+    return sizeRed.height;
+  }
+}
+
 fieldFocusChange(
     BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
   currentFocus != null ? currentFocus.unfocus() : null;

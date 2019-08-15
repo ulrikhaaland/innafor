@@ -19,7 +19,13 @@ class PostContainerController extends BaseController {
   PostContainerController({
     this.thePost,
     this.imageWidth,
+    this.imageHeight,
   });
+
+  @override
+  void initState() {
+    super.initState();
+  }
 }
 
 class PostContainer extends BaseView {

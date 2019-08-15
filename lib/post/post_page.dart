@@ -21,8 +21,6 @@ import '../helper.dart';
 class PostPageController extends BaseController {
   final BaseAuth auth;
 
-  VideoPlayerController _videoController;
-
   GlobalKey imageSizeKey = GlobalKey();
 
   var url;
@@ -33,6 +31,8 @@ class PostPageController extends BaseController {
 
   bool loaded = false;
 
+  bool video = true;
+
   double imgContainerWidth;
 
   PostPageController({this.auth});
@@ -42,13 +42,6 @@ class PostPageController extends BaseController {
     postList = <Post>[];
 
     getPost();
-
-    _videoController = VideoPlayerController.network(
-        'https://firebasestorage.googleapis.com/v0/b/innafor-f4e41.appspot.com/o/12345.png?alt=media&token=d8a7c03d-0b78-4318-83ff-3123b721a2d7')
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
   }
 
   void getPost() async {
@@ -79,61 +72,54 @@ class PostPage extends BaseView {
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return Container();
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            InnaforAppBar(
-              controller: InnaforAppBarController(auth: controller.auth),
-            ),
-            controller._videoController.value.initialized
-                ? AspectRatio(
-                    aspectRatio: 0.6 / 1,
-                    child: VideoPlayer(controller._videoController),
-                  )
-                : Container(),
-
-            // controller.thePost != null
-            //     ? PostImageContainer(
-            //         controller: PostImageContainerController(
-            //           thePost: controller.thePost,
-            //         ),
-            //       )
-            //     : Container(),
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  RatingBar(
-                    itemPadding: EdgeInsets.only(left: 8, right: 8, top: 8),
-                    onRatingUpdate: (r) => print(r),
-                    allowHalfRating: true,
-                    ratingWidget: RatingWidget(
-                        empty: Icon(
-                          FontAwesomeIcons.star,
-                          color: ServiceProvider.instance.instanceStyleService
-                              .appStyle.inactiveIconColor,
-                        ),
-                        full: Icon(
-                          FontAwesomeIcons.solidStar,
-                          color: ServiceProvider.instance.instanceStyleService
-                              .appStyle.mountbattenPink,
-                        ),
-                        half: Icon(
-                          FontAwesomeIcons.starHalfAlt,
-                          color: ServiceProvider.instance.instanceStyleService
-                              .appStyle.mountbattenPink,
-                        )),
+      body: Column(
+        children: <Widget>[
+          // InnaforAppBar(
+          //   controller: InnaforAppBarController(auth: controller.auth),
+          // ),
+          controller.thePost != null
+              ? PostImageContainer(
+                  controller: PostImageContainerController(
+                    thePost: controller.thePost,
                   ),
-                ],
-              ),
-            ),
-            Container(
-              height: ServiceProvider.instance.screenService
-                  .getHeightByPercentage(context, 2.5),
-            )
-          ],
-        ),
+                )
+              : Container(),
+          // SingleChildScrollView(
+          //   child: Column(
+          //     children: <Widget>[
+          //       RatingBar(
+          //         itemPadding: EdgeInsets.only(left: 8, right: 8, top: 8),
+          //         onRatingUpdate: (r) => print(r),
+          //         allowHalfRating: true,
+          //         ratingWidget: RatingWidget(
+          //             empty: Icon(
+          //               FontAwesomeIcons.star,
+          //               color: ServiceProvider.instance.instanceStyleService
+          //                   .appStyle.inactiveIconColor,
+          //             ),
+          //             full: Icon(
+          //               FontAwesomeIcons.solidStar,
+          //               color: ServiceProvider.instance.instanceStyleService
+          //                   .appStyle.mountbattenPink,
+          //             ),
+          //             half: Icon(
+          //               FontAwesomeIcons.starHalfAlt,
+          //               color: ServiceProvider.instance.instanceStyleService
+          //                   .appStyle.mountbattenPink,
+          //             )),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // Container(
+          //   height: ServiceProvider.instance.screenService
+          //       .getHeightByPercentage(context, 2.5),
+          // )
+        ],
       ),
     );
   }

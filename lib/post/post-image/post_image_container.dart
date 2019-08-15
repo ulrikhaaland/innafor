@@ -3,6 +3,7 @@ import 'package:bss/base_controller.dart';
 import 'package:bss/base_view.dart';
 import 'package:bss/objects/post.dart';
 import 'package:bss/post/post-image/post_image.dart';
+import 'package:bss/post/post-image/post_video.dart';
 import 'package:bss/post/post_container.dart';
 import 'package:bss/service/service_provider.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +30,13 @@ class PostImageContainerController extends BaseController {
 
   PostContainerController postContainerController;
 
+  bool video = true;
+
   PostImageContainerController({this.thePost});
 
   @override
   void initState() {
-    getImages();
+    if (thePost.imgUrlList.isNotEmpty) getImages();
 
     super.initState();
   }
@@ -47,7 +50,23 @@ class PostImageContainerController extends BaseController {
           loadedCallback: () {
             loaded = true;
             Timer(Duration(milliseconds: 50), () {
-              postImageController.getImageWidth();
+              imageHeight = getImageSize(
+                key: postImageController.imageSizeKey,
+                width: false,
+              );
+
+              imageWidth = getImageSize(
+                key: postImageController.imageSizeKey,
+                width: true,
+              );
+
+              postImageController.imageWidth = imageWidth;
+              postImageController.imageHeight = imageHeight;
+
+              setContainerCtrlr();
+
+              refresh();
+
               postImageController.refresh();
             });
           },
@@ -57,15 +76,17 @@ class PostImageContainerController extends BaseController {
       }
     }
     postImageController = PostImageController(
-        imageList: imageList,
-        returnImageWidth: (width) {
-          postContainerController = PostContainerController(
-            thePost: thePost,
-            imageWidth: width,
-          );
-          refresh();
-        });
+      imageList: imageList,
+    );
+
     refresh();
+  }
+
+  setContainerCtrlr() {
+    postContainerController = PostContainerController(
+      thePost: thePost,
+      imageWidth: imageWidth,
+    );
   }
 }
 
@@ -80,11 +101,17 @@ class PostImageContainer extends BaseView {
       fit: FlexFit.loose,
       child: Stack(
         children: <Widget>[
-          controller.imageList != null
+         controller.video ? PostVideo(
+           controller: PostVideoController(
+             
+           ),
+         ) : controller.imageList != null
               ? PostImage(controller: controller.postImageController)
               : Container(),
           controller.postContainerController != null
-              ? PostContainer(controller: controller.postContainerController)
+              ? PostContainer(
+                  controller: controller.postContainerController,
+                )
               : Container(),
         ],
       ),

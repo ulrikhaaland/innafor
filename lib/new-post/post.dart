@@ -71,12 +71,11 @@ class NewPost extends BaseView {
 
   NewPost({this.controller});
 
-  /// Select an image via gallery or camera
-
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return Container();
+
     return Scaffold(
-      // Select an image from the camera or gallery
       bottomNavigationBar: BottomAppBar(
         child: Row(
           children: <Widget>[

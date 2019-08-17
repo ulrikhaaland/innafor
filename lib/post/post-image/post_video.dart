@@ -1,5 +1,6 @@
 import 'package:bss/base_controller.dart';
 import 'package:bss/base_view.dart';
+import 'package:bss/service/service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,7 +16,7 @@ class PostVideoController extends BaseController {
   @override
   void initState() {
     _videoController = VideoPlayerController.network(
-        'https://firebasestorage.googleapis.com/v0/b/innafor-f4e41.appspot.com/o/12345.png?alt=media&token=d8a7c03d-0b78-4318-83ff-3123b721a2d7')
+        'https://firebasestorage.googleapis.com/v0/b/innafor-f4e41.appspot.com/o/1.png?alt=media&token=d8a7c03d-0b78-4318-83ff-3123b721a2d7')
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         _videoController.setLooping(true);
@@ -46,7 +47,8 @@ class PostVideo extends BaseView {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12.0),
           child: Container(
-            // width: 360,
+            // width: ServiceProvider.instance.screenService
+            //     .getWidthByPercentage(context, 95),
             key: controller.videoSizeKey,
             child: AspectRatio(
               aspectRatio: controller._videoController.value.aspectRatio,

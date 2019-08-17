@@ -116,10 +116,11 @@ class PostContainer extends BaseView {
                               ] else if (controller.expanded) ...[
                                 Container(
                                   height: ServiceProvider.instance.screenService
-                                      .getHeightByPercentage(context, 45),
+                                      .getHeightByPercentage(context, 35),
                                   child: MediaQuery.removePadding(
                                     context: context,
                                     removeTop: true,
+                                    removeBottom: true,
                                     child: Scrollbar(
                                       child: ListView.builder(
                                         shrinkWrap: true,

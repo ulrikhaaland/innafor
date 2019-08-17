@@ -21,7 +21,7 @@ class InnaforAppBar extends BaseView {
   Widget build(BuildContext context) {
     return Container(
       child: Padding(
-        padding: EdgeInsets.only(top: getDefaultPadding(context) * 8),
+        padding: EdgeInsets.only(top: getDefaultPadding(context) * 4),
         child: Column(
           children: <Widget>[
             Row(

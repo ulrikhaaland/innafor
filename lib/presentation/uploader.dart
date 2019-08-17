@@ -20,7 +20,7 @@ class _UploaderState extends State<Uploader> {
   /// Starts an upload task
   void _startUpload() {
     /// Unique file name for the file
-    String filePath = '12345.png';
+    String filePath = '123.png';
 
     setState(() {
       _uploadTask = _storage.ref().child(filePath).putFile(widget.file);

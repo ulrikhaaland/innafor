@@ -29,7 +29,7 @@ class NewPostController extends BaseController {
   Future<void> _cropImage() async {
     File cropped = await ImageCropper.cropImage(
         sourcePath: _imageFile.path,
-        ratioX: 0.6,
+        ratioX: 0.65,
         ratioY: 1.0,
         // maxWidth: 512,
         // maxHeight: 512,

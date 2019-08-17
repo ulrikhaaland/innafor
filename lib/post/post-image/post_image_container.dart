@@ -23,6 +23,8 @@ class PostImageContainerController extends BaseController {
 
   List<AdvancedNetworkImage> imageList;
 
+  final VoidCallback hasLoaded;
+
   double imageWidth;
   double imageHeight;
 
@@ -30,9 +32,9 @@ class PostImageContainerController extends BaseController {
 
   PostContainerController postContainerController;
 
-  bool video = true;
+  bool video = false;
 
-  PostImageContainerController({this.thePost});
+  PostImageContainerController({this.hasLoaded, this.thePost});
 
   @override
   void initState() {
@@ -68,6 +70,8 @@ class PostImageContainerController extends BaseController {
               refresh();
 
               postImageController.refresh();
+
+              hasLoaded();
             });
           },
         ));
@@ -101,13 +105,13 @@ class PostImageContainer extends BaseView {
       fit: FlexFit.loose,
       child: Stack(
         children: <Widget>[
-         controller.video ? PostVideo(
-           controller: PostVideoController(
-             
-           ),
-         ) : controller.imageList != null
-              ? PostImage(controller: controller.postImageController)
-              : Container(),
+          controller.video
+              ? PostVideo(
+                  controller: PostVideoController(),
+                )
+              : controller.imageList != null
+                  ? PostImage(controller: controller.postImageController)
+                  : Container(),
           controller.postContainerController != null
               ? PostContainer(
                   controller: controller.postContainerController,

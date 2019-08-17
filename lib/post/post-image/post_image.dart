@@ -72,13 +72,20 @@ class PostImage extends BaseView {
       ),
       child: Stack(
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12.0),
-            child: Container(
-              key: controller.imageSizeKey,
-              child: TransitionToImage(
-                image: controller.imageList[controller.imageIndex],
-                loadingWidget: Center(child: CPI(false)),
+          Container(
+            width: ServiceProvider.instance.screenService
+                .getWidthByPercentage(context, 93),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Container(
+                key: controller.imageSizeKey,
+                child: AspectRatio(
+                  aspectRatio: 0.65 / 1,
+                  child: TransitionToImage(
+                    image: controller.imageList[controller.imageIndex],
+                    loadingWidget: Center(child: CPI(false)),
+                  ),
+                ),
               ),
             ),
           ),

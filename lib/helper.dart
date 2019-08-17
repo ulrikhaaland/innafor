@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import './service/service_provider.dart';
@@ -59,6 +61,17 @@ double getCircleAvatarBorderSize(BuildContext context) {
   }
 
   return _avatarCircleBorderSize;
+}
+
+void scrollScreen(
+    {double height,
+    ScrollController controller,
+    int scrollDuration,
+    int timeBeforeAction}) {
+  Timer(Duration(milliseconds: timeBeforeAction ?? 100), () {
+    controller.position.moveTo(height ?? 100,
+        duration: Duration(milliseconds: scrollDuration ?? 300));
+  });
 }
 
 double _avatarCircleBorderSize;

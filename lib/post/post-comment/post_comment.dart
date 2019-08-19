@@ -1,20 +1,23 @@
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/helper.dart';
-import 'package:bss/objects/comment.dart';
-import 'package:bss/objects/post.dart';
-import 'package:bss/post/post-comment/post_comment_page.dart';
-import 'package:bss/service/service_provider.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/helper.dart';
+import 'package:innafor/objects/comment.dart';
+import 'package:innafor/objects/user.dart';
+import 'package:innafor/post/post-comment/post_comment_page.dart';
+import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:innafor/widgets/dialogs/innafor_dialog.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class PostCommentController extends BaseController {
   bool showComments = false;
 
   final Comment comment;
+
+  bool favorite;
 
   PostCommentController({this.comment});
 }
@@ -23,9 +26,15 @@ class PostComment extends BaseView {
   final PostCommentController controller;
 
   PostComment({this.controller});
+
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
+
+    User user = Provider.of<User>(context);
+
+    if (controller.favorite == null)
+      controller.favorite = controller.comment.favoriteIds.contains(user.id);
     return Padding(
       padding: EdgeInsets.only(top: getDefaultPadding(context) * 2),
       child: Container(
@@ -58,6 +67,88 @@ class PostComment extends BaseView {
                                   .mountbattenPink,
                               backgroundImage: AdvancedNetworkImage(
                                   controller.comment.userImageUrl),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => showDialog(
+                                context: context,
+                                builder: (context) => InnaforDialog(
+                                      title: "Vurderingsevne",
+                                      items: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: getDefaultPadding(context) *
+                                                  4,
+                                              right:
+                                                  getDefaultPadding(context) *
+                                                      4,
+                                              bottom: 24),
+                                          child: Text(
+                                            "Ved hjelp av kunstlig intelligens og maskinlæring... ;) blir hver bruker vurdert ut i fra hvor god brukeren er til å ",
+                                            style: ServiceProvider
+                                                .instance
+                                                .instanceStyleService
+                                                .appStyle
+                                                .body1Black,
+                                          ),
+                                        ),
+                                        Column(
+                                          children: <Widget>[
+                                            GestureDetector(
+                                              onTap: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: Container(
+                                                height: ServiceProvider
+                                                    .instance.screenService
+                                                    .getHeightByPercentage(
+                                                        context, 7.5),
+                                                width: ServiceProvider
+                                                    .instance.screenService
+                                                    .getWidthByPercentage(
+                                                        context, 100),
+                                                decoration: BoxDecoration(
+                                                    color: ServiceProvider
+                                                        .instance
+                                                        .instanceStyleService
+                                                        .appStyle
+                                                        .leBleu,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            bottomLeft: Radius
+                                                                .circular(8),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    8))),
+                                                child: Center(
+                                                  child: Text(
+                                                    "Jeg forstår",
+                                                    style: ServiceProvider
+                                                        .instance
+                                                        .instanceStyleService
+                                                        .appStyle
+                                                        .titleWhite,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                            child: CircularPercentIndicator(
+                              radius: ServiceProvider.instance.screenService
+                                  .getWidthByPercentage(context, 15),
+                              percent: 0.75,
+                              progressColor: ServiceProvider
+                                  .instance
+                                  .instanceStyleService
+                                  .appStyle
+                                  .mountbattenPink,
+                              center: Text(
+                                "75%",
+                                style: ServiceProvider.instance
+                                    .instanceStyleService.appStyle.body1Black,
+                              ),
                             ),
                           ),
                           GestureDetector(
@@ -189,36 +280,66 @@ class PostComment extends BaseView {
                                 Container(
                                   width: getDefaultPadding(context) * 4,
                                 ),
-                                Row(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          right: getDefaultPadding(context)),
-                                      child: Icon(
-                                        FontAwesomeIcons.heart,
-                                        color: ServiceProvider
-                                            .instance
-                                            .instanceStyleService
-                                            .appStyle
-                                            .textGrey,
-                                        size: ServiceProvider
-                                            .instance
-                                            .instanceStyleService
-                                            .appStyle
-                                            .iconSizeExtraSmall,
+                                GestureDetector(
+                                  onTap: () {
+                                    if (controller.favorite) {
+                                      controller.comment.favoriteIds
+                                          .remove(user.id);
+                                      controller.comment.docRef
+                                          .collection("favorites")
+                                          .document(user.id)
+                                          .delete();
+                                    } else {
+                                      controller.comment.favoriteIds
+                                          .add(user.id);
+                                      controller.comment.docRef
+                                          .collection("favorites")
+                                          .document(user.id)
+                                          .setData({});
+                                    }
+
+                                    controller.favorite = !controller.favorite;
+                                    controller.refresh();
+                                  },
+                                  child: Row(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            right: getDefaultPadding(context)),
+                                        child: Icon(
+                                          controller.favorite
+                                              ? FontAwesomeIcons.solidHeart
+                                              : FontAwesomeIcons.heart,
+                                          color: controller.favorite
+                                              ? ServiceProvider
+                                                  .instance
+                                                  .instanceStyleService
+                                                  .appStyle
+                                                  .imperial
+                                              : ServiceProvider
+                                                  .instance
+                                                  .instanceStyleService
+                                                  .appStyle
+                                                  .textGrey,
+                                          size: ServiceProvider
+                                              .instance
+                                              .instanceStyleService
+                                              .appStyle
+                                              .iconSizeExtraSmall,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      controller.comment.favoriteIds.length
-                                              .toString() ??
-                                          "0",
-                                      style: ServiceProvider
-                                          .instance
-                                          .instanceStyleService
-                                          .appStyle
-                                          .timestamp,
-                                    )
-                                  ],
+                                      Text(
+                                        controller.comment.favoriteIds.length
+                                                .toString() ??
+                                            "0",
+                                        style: ServiceProvider
+                                            .instance
+                                            .instanceStyleService
+                                            .appStyle
+                                            .timestamp,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),

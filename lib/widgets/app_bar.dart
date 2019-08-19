@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bss/service/service_provider.dart';
+import 'package:innafor/service/service_provider.dart';
 
 class HenvendAppBar extends StatelessWidget implements PreferredSize {
   final String title;

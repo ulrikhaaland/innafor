@@ -1,13 +1,13 @@
 import 'dart:io';
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/objects/user.dart';
-import 'package:bss/helper.dart';
-import 'package:bss/presentation/image_picker.dart';
-import 'package:bss/service/service_provider.dart';
-import 'package:bss/widgets/buttons/date_time_picker.dart';
-import 'package:bss/widgets/buttons/primary_button.dart';
-import 'package:bss/widgets/textfield/primary_textfield.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/objects/user.dart';
+import 'package:innafor/helper.dart';
+import 'package:innafor/presentation/image_picker.dart';
+import 'package:innafor/service/service_provider.dart';
+import 'package:innafor/widgets/buttons/date_time_picker.dart';
+import 'package:innafor/widgets/buttons/primary_button.dart';
+import 'package:innafor/widgets/textfield/primary_textfield.dart';
 import 'package:flutter/material.dart';
 
 class UserInfoController extends BaseController {

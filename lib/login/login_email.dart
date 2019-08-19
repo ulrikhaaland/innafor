@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/service/service_provider.dart';
-import 'package:bss/widgets/buttons/primary_button.dart';
-import 'package:bss/widgets/textfield/primary_textfield.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/service/service_provider.dart';
+import 'package:innafor/widgets/buttons/primary_button.dart';
+import 'package:innafor/widgets/textfield/primary_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,4 +1,4 @@
-name: bss
+name: innafor
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -28,7 +28,6 @@ dependencies:
   firebase_auth: ^0.11.0
   provider: ^2.0.1
   cloud_firestore: ^0.11.0
-  percent_indicator: ^1.0.16
   flutter_icons: ^0.1.4
   fancy_bottom_navigation: ^0.3.2
   flutter_page_indicator: ^0.0.3
@@ -45,6 +44,7 @@ dependencies:
   flutter_advanced_networkimage: ^0.5.0
   vibration: 1.2.1
   video_player: ^0.10.1+6
+  percent_indicator: ^2.1.1
 
 dev_dependencies:
   flutter_test:

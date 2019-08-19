@@ -1,13 +1,10 @@
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/post/post-image/post_video.dart';
-import 'package:bss/service/service_provider.dart';
-import 'package:bss/widgets/circular_progress_indicator.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/service/service_provider.dart';
+import 'package:innafor/widgets/circular_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
-import 'package:vibration/vibration.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../helper.dart';
 

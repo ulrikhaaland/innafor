@@ -1,7 +1,7 @@
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/helper.dart';
-import 'package:bss/widgets/circular_progress_indicator.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/helper.dart';
+import 'package:innafor/widgets/circular_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import '../../service/service_provider.dart';
 

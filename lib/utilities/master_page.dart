@@ -1,7 +1,7 @@
-import 'package:bss/helper.dart';
-import 'package:bss/service/screen_service.dart';
-import 'package:bss/service/service_provider.dart';
-import 'package:bss/utilities/set_loading.dart';
+import 'package:innafor/helper.dart';
+import 'package:innafor/service/screen_service.dart';
+import 'package:innafor/service/service_provider.dart';
+import 'package:innafor/utilities/set_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

@@ -1,7 +1,7 @@
-import 'package:bss/login/login_phone.dart';
-import 'package:bss/objects/post.dart';
-import 'package:bss/root_page.dart';
-import 'package:bss/test.dart';
+import 'package:innafor/login/login_phone.dart';
+import 'package:innafor/objects/post.dart';
+import 'package:innafor/root_page.dart';
+import 'package:innafor/test.dart';
 
 import './service/instance_style_service.dart';
 import './service/theme_service.dart';

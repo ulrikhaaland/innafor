@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/presentation/uploader.dart';
-import 'package:bss/service/screen_service.dart';
-import 'package:bss/service/service_provider.dart';
-import 'package:bss/utilities/master_page.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/presentation/uploader.dart';
+import 'package:innafor/service/screen_service.dart';
+import 'package:innafor/service/service_provider.dart';
+import 'package:innafor/utilities/master_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';

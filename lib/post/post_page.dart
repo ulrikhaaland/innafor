@@ -1,23 +1,16 @@
-import 'dart:async';
-import 'package:bss/app-bar/innafor_app_bar.dart';
-import 'package:bss/objects/comment.dart';
-import 'package:bss/objects/post.dart';
-import 'package:bss/auth.dart';
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/post/post-comment/post_comment.dart';
-import 'package:bss/post/post-image/post_image_container.dart';
-import 'package:bss/widgets/circular_progress_indicator.dart';
+import 'package:innafor/app-bar/innafor_app_bar.dart';
+import 'package:innafor/objects/comment.dart';
+import 'package:innafor/objects/post.dart';
+import 'package:innafor/auth.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/post/post-comment/post_comment.dart';
+import 'package:innafor/post/post-image/post_image_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:flutter_advanced_networkimage/transition.dart';
-import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:video_player/video_player.dart';
 import '../service/service_provider.dart';
 import '../helper.dart';
 
@@ -79,17 +72,17 @@ class PostPageController extends BaseController {
         // Iterate through all documents and convert data into Comment objects
         commentDoc.documents.forEach((cd) {
           Comment comment = Comment(
-            id: cd.documentID,
-            text: cd.data["text"],
-            timestamp: cd.data["timestamp"].toDate(),
-            commentCount: cd.data["comment_count"],
-            favoriteIds: <String>[],
-            children: <Comment>[],
-            isChildOfId: cd.data["is_child_of_id"] ?? "0",
-            userImageUrl: cd.data["user_image_url"],
-            userName: cd.data["user_name"],
-            uid: cd.data["uid"],
-          );
+              id: cd.documentID,
+              text: cd.data["text"],
+              timestamp: cd.data["timestamp"].toDate(),
+              commentCount: cd.data["comment_count"],
+              favoriteIds: <String>[],
+              children: <Comment>[],
+              isChildOfId: cd.data["is_child_of_id"] ?? "0",
+              userImageUrl: cd.data["user_image_url"],
+              userName: cd.data["user_name"],
+              uid: cd.data["uid"],
+              docRef: cd.reference);
           print(cd.reference.toString());
           // Get user id's for comment favorites
           cd.reference

@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'package:bss/base_controller.dart';
-import 'package:bss/base_view.dart';
-import 'package:bss/objects/post.dart';
-import 'package:bss/post/post-image/post_image.dart';
-import 'package:bss/post/post-image/post_video.dart';
-import 'package:bss/post/post_container.dart';
-import 'package:bss/service/service_provider.dart';
+import 'package:innafor/base_controller.dart';
+import 'package:innafor/base_view.dart';
+import 'package:innafor/objects/post.dart';
+import 'package:innafor/post/post-image/post_image.dart';
+import 'package:innafor/post/post-image/post_video.dart';
+import 'package:innafor/post/post_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:flutter_advanced_networkimage/transition.dart';
 
 import '../../helper.dart';
 

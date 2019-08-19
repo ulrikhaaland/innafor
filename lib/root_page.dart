@@ -1,7 +1,8 @@
-import 'package:bss/post/post_page.dart';
+import 'package:innafor/post/post_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'animation/innafor_intro.dart';
 import 'auth.dart';
 import 'login/login_page.dart';
@@ -11,6 +12,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import './base_controller.dart';
 import './base_view.dart';
+import 'package:innafor/post/post-comment/post_comment.dart';
 
 enum AuthState {
   notAuthenticated,
@@ -144,9 +146,12 @@ class RootPage extends BaseView {
         ),
       );
     } else {
-      return PostPage(
-        controller: PostPageController(
-          auth: controller._auth,
+      return Provider.value(
+        value: controller._user,
+        child: PostPage(
+          controller: PostPageController(
+            auth: controller._auth,
+          ),
         ),
       );
     }

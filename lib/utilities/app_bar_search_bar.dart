@@ -1,4 +1,4 @@
-import 'package:bss/service/service_provider.dart';
+import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../helper.dart';

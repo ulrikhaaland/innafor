@@ -1,5 +1,5 @@
-import 'package:bss/service/instance_style_service.dart';
-import 'package:bss/service/theme_service.dart';
+import 'package:innafor/service/instance_style_service.dart';
+import 'package:innafor/service/theme_service.dart';
 
 import './screen_service.dart';
 

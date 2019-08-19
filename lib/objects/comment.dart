@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'user.dart';
 
 class Comment {
@@ -12,6 +14,8 @@ class Comment {
   final List<Comment> children;
   int sort;
   final List<String> favoriteIds;
+  final double innaforRating;
+  final DocumentReference docRef;
 
   Comment(
       {this.id,
@@ -23,5 +27,7 @@ class Comment {
       this.uid,
       this.userImageUrl,
       this.userName,
-      this.favoriteIds});
+      this.favoriteIds,
+      this.innaforRating,
+      this.docRef});
 }

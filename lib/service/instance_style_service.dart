@@ -54,23 +54,23 @@ class InstanceStyleService {
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
-      color: Colors.white,
+      color: Colors.black,
     );
 
     _appStyle.secondaryTitle = new TextStyle(
-      fontSize: screenHeight * 0.040 * factor,
+      fontSize: screenHeight * 0.030 * factor,
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
       color: Colors.black,
     );
 
-    _appStyle.thirdTitle = new TextStyle(
-      fontSize: screenHeight * 0.030 * factor,
-      fontFamily: 'Asap',
-      fontWeight: FontWeight.bold,
+    _appStyle.smallTitle = new TextStyle(
+      fontSize: screenHeight * 0.024 * factor,
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
-      color: _appStyle.textGrey,
+      color: Colors.black,
     );
 
     _appStyle.titleGrey = new TextStyle(
@@ -80,12 +80,26 @@ class InstanceStyleService {
         fontStyle: FontStyle.normal,
         color: _appStyle.textGrey);
 
+    _appStyle.titleWhite = new TextStyle(
+        fontSize: screenHeight * 0.030 * factor,
+        fontFamily: 'Montserrat',
+        fontWeight: FontWeight.bold,
+        fontStyle: FontStyle.normal,
+        color: Colors.white);
+
     _appStyle.body1 = new TextStyle(
       fontFamily: "Montserrat",
       fontSize: screenHeight * 0.020 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: Colors.white,
+    );
+    _appStyle.timestamp = new TextStyle(
+      fontFamily: "Montserrat",
+      fontSize: screenHeight * 0.018 * factor,
+      fontWeight: FontWeight.normal,
+      fontStyle: FontStyle.normal,
+      color: appStyle.textGrey,
     );
 
     _appStyle.confirm = new TextStyle(
@@ -107,7 +121,7 @@ class InstanceStyleService {
     _appStyle.body1Black = new TextStyle(
       fontFamily: "Montserrat",
       fontSize: screenHeight * 0.020 * factor,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: Colors.black,
     );
@@ -191,6 +205,8 @@ class InstanceStyleService {
     );
 
     _appStyle.iconSizeSmall = screenHeight * 0.031 * factor;
+
+    _appStyle.iconSizeExtraSmall = screenHeight * 0.021 * factor;
 
     _appStyle.iconSizeStandard = screenHeight * 0.041 * factor;
 

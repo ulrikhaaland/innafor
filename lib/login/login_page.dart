@@ -53,22 +53,22 @@ class LoginPage extends BaseView {
                 Text(
                   "LOGG INN",
                   style: ServiceProvider
-                      .instance.instanceStyleService.appStyle.secondaryTitle,
+                      .instance.instanceStyleService.appStyle.title,
                 ),
                 Text(
                   "ELLER",
                   style: ServiceProvider
-                      .instance.instanceStyleService.appStyle.secondaryTitle,
+                      .instance.instanceStyleService.appStyle.title,
                 ),
                 Text(
                   "REGISTRER DEG",
                   style: ServiceProvider
-                      .instance.instanceStyleService.appStyle.secondaryTitle,
+                      .instance.instanceStyleService.appStyle.title,
                 ),
                 Text(
                   "MED",
                   style: ServiceProvider
-                      .instance.instanceStyleService.appStyle.secondaryTitle,
+                      .instance.instanceStyleService.appStyle.title,
                 ),
                 Container(
                   height: ServiceProvider.instance.screenService
@@ -113,21 +113,19 @@ class LoginPage extends BaseView {
                   width: 1,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EmailLogin(
-                                controller: EmailLoginController(
-                                    auth: controller.auth,
-                                    returnUser: () async {
-                                      await controller.rootPageController
-                                          .getUser();
-                                      Navigator.of(context).pop();
-                                    }),
-                              )),
-                    );
-                  },
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EmailLogin(
+                              controller: EmailLoginController(
+                                  auth: controller.auth,
+                                  returnUser: () async {
+                                    await controller.rootPageController
+                                        .getUser();
+                                    Navigator.of(context).pop();
+                                  }),
+                            )),
+                  ),
                   child: Container(
                     height: ServiceProvider.instance.screenService
                         .getPortraitHeightByPercentage(context, 7.5),

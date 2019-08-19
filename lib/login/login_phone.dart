@@ -100,16 +100,16 @@ class PhoneLogin extends BaseView {
           backgroundColor: ServiceProvider
               .instance.instanceStyleService.appStyle.backgroundColor,
           elevation: 0,
+          title: Text(
+            "LOGG INN",
+            style: ServiceProvider
+                .instance.instanceStyleService.appStyle.secondaryTitle,
+          ),
         ),
         backgroundColor: ServiceProvider
             .instance.instanceStyleService.appStyle.backgroundColor,
         body: Column(
           children: <Widget>[
-            Text(
-              "LOGG INN",
-              style: ServiceProvider
-                  .instance.instanceStyleService.appStyle.secondaryTitle,
-            ),
             Container(
               height: getDefaultPadding(context) * 2,
             ),

@@ -59,32 +59,68 @@ class PostPageController extends BaseController {
     QuerySnapshot postSnap =
         await Firestore.instance.collection("post").getDocuments();
 
-    postSnap.documents.forEach((d) {
+    // Fetch posts
+    postSnap.documents.forEach((postDoc) {
       Post post = Post(
-          message: d.data["message"],
-          imgUrlList: d.data["img"],
-          commentCount: d.data["comments"],
+          message: postDoc.data["message"],
+          imgUrlList: postDoc.data["img"],
+          commentCount: postDoc.data["comments"],
           commentList: [],
-          title: d.data["title"]);
+          title: postDoc.data["title"]);
       postList.add(post);
 
+      // Fetch comments for each post
       Firestore.instance
-          .collection("post/$d/comments")
+          .collection("post/${postDoc.documentID}/comments")
           .getDocuments()
-          .then((commentSnap) {
-        commentSnap.documents.forEach((cd) {
-          post.commentList.add(Comment(
+          .then((commentDoc) {
+        List<Comment> isChild = <Comment>[];
+
+        // Iterate through all documents and convert data into Comment objects
+        commentDoc.documents.forEach((cd) {
+          Comment comment = Comment(
+            id: cd.documentID,
             text: cd.data["text"],
-            timestamp: cd.data["timestamp"],
+            timestamp: cd.data["timestamp"].toDate(),
             commentCount: cd.data["comment_count"],
-            favoriteCount: cd.data["favorite_count"],
-          ));
+            favoriteIds: <String>[],
+            children: <Comment>[],
+            isChildOfId: cd.data["is_child_of_id"] ?? "0",
+            userImageUrl: cd.data["user_image_url"],
+            userName: cd.data["user_name"],
+            uid: cd.data["uid"],
+          );
+          print(cd.reference.toString());
+          // Get user id's for comment favorites
+          cd.reference
+              .collection("favorites")
+              .getDocuments()
+              .then((favoriteColl) {
+            favoriteColl.documents.forEach(
+                (favorite) => comment.favoriteIds.add(favorite.documentID));
+          });
+
+          // Seperate comments that is a child or not into different 2 lists
+          comment.isChildOfId == "0"
+              ? post.commentList.add(comment)
+              : isChild.add(comment);
         });
+
+        // add child comments to correct parent
+        post.commentList.forEach((parent) {
+          isChild.forEach((child) {
+            if (parent.id == child.isChildOfId) {
+              parent.children.add(child);
+            }
+          });
+        });
+        post.commentList
+            .forEach((c) => c.sort = c.children.length + c.favoriteIds.length);
+        post.commentList.sort((a, b) => b.sort.compareTo(a.sort));
+        refresh();
       });
     });
     thePost = postList[0];
-
-    refresh();
   }
 }
 
@@ -238,9 +274,18 @@ class PostPage extends BaseView {
                   else
                     Container(),
                   if (controller.showComments) ...[
-                    PostComment(
-                      controller: PostCommentController(),
+                    Column(
+                      children: controller.thePost.commentList
+                          .map((c) => PostComment(
+                                controller: PostCommentController(comment: c),
+                              ))
+                          .toList(),
                     ),
+                    // PostComment(
+                    //   controller: PostCommentController(
+                    //     comment: controller.thePost.commentList[0],
+                    //   ),
+                    // ),
                     Container(
                       height: ServiceProvider.instance.screenService
                           .getHeightByPercentage(context, 5),

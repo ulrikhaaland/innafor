@@ -152,7 +152,7 @@ class UserInfo extends BaseView {
             child: Text(
               "Personlig informasjon",
               style: ServiceProvider
-                  .instance.instanceStyleService.appStyle.thirdTitle,
+                  .instance.instanceStyleService.appStyle.secondaryTitle,
               textAlign: TextAlign.start,
             ),
           ),

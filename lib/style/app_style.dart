@@ -34,13 +34,16 @@ class AppStyle {
       this.textFieldLabel,
       this.buttonText,
       this.card,
-      this.titleGrey,
+      this.titleWhite,
       this.body1Black,
       this.secondaryTitle,
-      this.thirdTitle,
+      this.smallTitle,
       this.confirm,
       this.cancel,
-      this.italic});
+      this.italic,
+      this.timestamp,
+      this.iconSizeExtraSmall,
+      this.titleGrey});
 
   Color themeColor;
   Color backgroundColor;
@@ -55,13 +58,15 @@ class AppStyle {
   Color titleOneColor;
   Color card;
 
+  TextStyle timestamp;
   TextStyle iconFloatText;
   TextStyle italic;
   TextStyle cancel;
   TextStyle confirm;
-  TextStyle thirdTitle;
+  TextStyle smallTitle;
   TextStyle body1Black;
   TextStyle secondaryTitle;
+  TextStyle titleWhite;
   TextStyle titleGrey;
   TextStyle buttonText;
   TextStyle title;
@@ -84,6 +89,7 @@ class AppStyle {
   Color inactiveIconColor;
   Color activeIconColor;
   double iconSizeSmall;
+  double iconSizeExtraSmall;
   double iconSizeStandard;
   double iconSizeBig;
 }

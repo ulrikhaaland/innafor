@@ -64,8 +64,8 @@ class PostContainer extends BaseView {
                       child: Container(
                         child: Text(
                           controller.thePost.title,
-                          style: ServiceProvider
-                              .instance.instanceStyleService.appStyle.title,
+                          style: ServiceProvider.instance.instanceStyleService
+                              .appStyle.titleWhite,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

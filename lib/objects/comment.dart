@@ -1,20 +1,27 @@
 import 'user.dart';
 
 class Comment {
+  final String uid;
+  final String userImageUrl;
+  final String userName;
+  final String id;
+  final String isChildOfId;
   final String text;
-  final User user;
   final int commentCount;
   final DateTime timestamp;
-  final int favoriteCount;
-  final List<Comment> commentList;
-  final bool children;
+  final List<Comment> children;
+  int sort;
+  final List<String> favoriteIds;
 
   Comment(
-      {this.commentList,
+      {this.id,
+      this.isChildOfId,
       this.text,
-      this.user,
       this.commentCount,
       this.timestamp,
-      this.favoriteCount,
-      this.children});
+      this.children,
+      this.uid,
+      this.userImageUrl,
+      this.userName,
+      this.favoriteIds});
 }

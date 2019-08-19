@@ -120,6 +120,17 @@ class EmailLogin extends BaseView {
           backgroundColor: ServiceProvider
               .instance.instanceStyleService.appStyle.backgroundColor,
           elevation: 0,
+          title: Text(
+            controller.isLogin ? "LOGG INN" : "REGISTRER",
+            style: ServiceProvider
+                .instance.instanceStyleService.appStyle.secondaryTitle,
+          ),
+          // bottom: PreferredSize(
+          //     preferredSize: Size(0, 0),
+          //     child: Divider(
+          //       color: ServiceProvider
+          //           .instance.instanceStyleService.appStyle.textGrey,
+          //     )),
         ),
         backgroundColor: ServiceProvider
             .instance.instanceStyleService.appStyle.backgroundColor,
@@ -128,11 +139,6 @@ class EmailLogin extends BaseView {
             key: controller.formKey,
             child: Column(
               children: <Widget>[
-                Text(
-                  controller.isLogin ? "LOGG INN" : "REGISTRER",
-                  style: ServiceProvider
-                      .instance.instanceStyleService.appStyle.secondaryTitle,
-                ),
                 Container(
                   height: getDefaultPadding(context) * 2,
                 ),

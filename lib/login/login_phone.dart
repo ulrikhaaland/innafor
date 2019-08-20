@@ -70,12 +70,6 @@ class PhoneLoginController extends BaseController {
       },
     );
   }
-
-  @override
-  void dispose() {
-    _formKey.currentState.dispose();
-    super.dispose();
-  }
 }
 
 class PhoneLogin extends BaseView {

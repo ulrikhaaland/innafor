@@ -50,9 +50,7 @@ class PrimaryButton extends BaseView {
             minWidth: controller.width ??
                 ServiceProvider.instance.screenService
                     .getPortraitWidthByPercentage(context, 90),
-            minHeight: controller.heigth ??
-                ServiceProvider.instance.screenService
-                    .getPortraitHeightByPercentage(context, 7.5)),
+            minHeight: controller.heigth ?? 54),
         child: RaisedButton(
             child: controller.isLoading
                 ? CPI(false)

@@ -19,7 +19,9 @@ class PostCommentController extends BaseController {
 
   bool favorite;
 
-  PostCommentController({this.comment});
+  final VoidCallback showBottomSheet;
+
+  PostCommentController({this.comment, this.showBottomSheet});
 }
 
 class PostComment extends BaseView {
@@ -214,7 +216,7 @@ class PostComment extends BaseView {
                                           .timestamp,
                                     ),
                                     GestureDetector(
-                                      onTap: () => print("Open DIALOG"),
+                                      onTap: () => controller.showBottomSheet(),
                                       child: Icon(
                                         Icons.arrow_drop_down,
                                         color: ServiceProvider
@@ -315,7 +317,7 @@ class PostComment extends BaseView {
                                                   .instance
                                                   .instanceStyleService
                                                   .appStyle
-                                                  .imperial
+                                                  .mountbattenPink
                                               : ServiceProvider
                                                   .instance
                                                   .instanceStyleService

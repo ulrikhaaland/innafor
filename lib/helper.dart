@@ -22,7 +22,7 @@ double getAppBarIconSize(BuildContext context) {
 
 double _appBarIconSize;
 
-double getImageSize({GlobalKey key, bool width}) {
+double getContainerSize({GlobalKey key, bool width}) {
   final RenderBox renderBoxRed = key.currentContext.findRenderObject();
   final sizeRed = renderBoxRed.size;
   print(sizeRed.width);

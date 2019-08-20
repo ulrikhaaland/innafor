@@ -142,15 +142,16 @@ class InstanceStyleService {
 
     _appStyle.body1Light = new TextStyle(
         fontSize: screenHeight * 0.020 * factor,
-        fontFamily: "Asap",
+        fontFamily: "Montserrat",
         fontWeight: FontWeight.normal,
         fontStyle: FontStyle.normal,
         color: Colors.white);
 
     _appStyle.body2 = new TextStyle(
       fontSize: screenHeight * 0.024 * factor,
+      fontFamily: "Montserrat",
       fontWeight: FontWeight.normal,
-      fontStyle: FontStyle.italic,
+      fontStyle: FontStyle.normal,
       color: _appStyle.textGrey,
     );
 

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:innafor/login/login_phone.dart';
 import 'package:innafor/objects/post.dart';
 import 'package:innafor/root_page.dart';
@@ -12,10 +13,11 @@ import './service/service_provider.dart';
 import './service/screen_service.dart';
 import 'new-post/post.dart';
 
-void main() {
+Future main() async {
   ServiceProvider.instance.screenService = ScreenService();
   ServiceProvider.instance.instanceStyleService = InstanceStyleService();
   ServiceProvider.instance.themeService = ThemeService();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(App());
 }
 

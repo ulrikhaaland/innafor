@@ -50,12 +50,12 @@ class PostImageContainerController extends BaseController {
           loadedCallback: () {
             loaded = true;
             Timer(Duration(milliseconds: 50), () {
-              imageHeight = getImageSize(
+              imageHeight = getContainerSize(
                 key: postImageController.imageSizeKey,
                 width: false,
               );
 
-              imageWidth = getImageSize(
+              imageWidth = getContainerSize(
                 key: postImageController.imageSizeKey,
                 width: true,
               );

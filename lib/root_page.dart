@@ -45,14 +45,24 @@ class RootPageController extends BaseController {
           profilePicURL: null,
           appVersion: 1,
           notifications: 0,
+          blockedUserId: <String>[],
+          docRef: docSnap.reference,
         );
+
         await Firestore.instance
             .document("users/${_firebaseUser.uid}")
             .setData(_user.toJson());
       } else {
-        _user = User();
+        _user = User(
+          docRef: docSnap.reference,
+        );
         _user.fromJson(docSnap.data);
       }
+      // Get list of blocked users id
+      docSnap.reference.collection("blocked").getDocuments().then((qSnap) =>
+          qSnap.documents
+              .forEach((doc) => _user.blockedUserId.add(doc.documentID)));
+
       _updateFcmToken();
     }
 

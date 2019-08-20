@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart' as prefix0;
 import 'package:innafor/app-bar/innafor_app_bar.dart';
 import 'package:innafor/objects/comment.dart';
 import 'package:innafor/objects/post.dart';
 import 'package:innafor/auth.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
+import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post-comment/post_comment.dart';
 import 'package:innafor/post/post-image/post_image_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:innafor/widgets/dialogs/report_dialog.dart';
 import '../service/service_provider.dart';
 import '../helper.dart';
 
@@ -18,6 +21,8 @@ class PostPageController extends BaseController {
   final BaseAuth auth;
 
   GlobalKey imageSizeKey = GlobalKey();
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   ScrollController scrollController = ScrollController();
 
@@ -28,6 +33,8 @@ class PostPageController extends BaseController {
   Post thePost;
 
   bool loaded = false;
+
+  bool showShadowOverlay = false;
 
   bool showComments = false;
 
@@ -46,6 +53,12 @@ class PostPageController extends BaseController {
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  void shadow(bool pop) {
+    showShadowOverlay = !showShadowOverlay;
+    if (pop) Navigator.pop(context);
+    refresh();
   }
 
   void getPost() async {
@@ -134,6 +147,7 @@ class PostPage extends BaseView {
         ServiceProvider.instance.screenService.getHeight(context);
     print(deviceHeight);
     return Scaffold(
+      key: controller._scaffoldKey,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         controller: controller.scrollController,
@@ -211,7 +225,7 @@ class PostPage extends BaseView {
                       ],
                     ),
                   ),
-                  if (controller.thePost.commentCount > 0)
+                  if (controller.thePost.commentList.length > 0)
                     GestureDetector(
                       onTap: () {
                         double height;
@@ -255,7 +269,7 @@ class PostPage extends BaseView {
                               Text(
                                 controller.showComments
                                     ? "Skjul kommentarer"
-                                    : "Se kommentarer",
+                                    : "Vis kommentarer",
                                 style: ServiceProvider.instance
                                     .instanceStyleService.appStyle.body1,
                               ),
@@ -270,7 +284,29 @@ class PostPage extends BaseView {
                     Column(
                       children: controller.thePost.commentList
                           .map((c) => PostComment(
-                                controller: PostCommentController(comment: c),
+                                controller: PostCommentController(
+                                    comment: c,
+                                    showBottomSheet: () {
+                                      controller.shadow(false);
+                                      controller._scaffoldKey.currentState
+                                          .showBottomSheet(
+                                        (
+                                          context,
+                                        ) {
+                                          return ReportDialog(
+                                            controller: ReportDialogController(
+                                              userInView: User(
+                                                name: c.userName,
+                                                id: c.uid,
+                                              ),
+                                              comment: c,
+                                              onDone: () =>
+                                                  controller.shadow(true),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }),
                               ))
                           .toList(),
                     ),
@@ -286,6 +322,15 @@ class PostPage extends BaseView {
                   ],
                 ],
               ),
+            ),
+            GestureDetector(
+              onTap: () => controller.shadow(true),
+              child: controller.showShadowOverlay
+                  ? Container(
+                      height: 10000,
+                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                    )
+                  : Container(),
             ),
           ],
         ),

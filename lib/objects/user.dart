@@ -13,18 +13,22 @@ class User {
   double appVersion;
   int notifications;
   DateTime birthDate;
+  List<String> blockedUserId;
+  bool blocked;
+  final DocumentReference docRef;
 
   final Firestore _firestoreInstance = Firestore.instance;
-  User({
-    this.email,
-    this.id,
-    this.name,
-    this.fcm,
-    this.bio,
-    this.profilePicURL,
-    this.appVersion,
-    this.notifications,
-  });
+  User(
+      {this.email,
+      this.id,
+      this.name,
+      this.fcm,
+      this.bio,
+      this.profilePicURL,
+      this.appVersion,
+      this.notifications,
+      this.blockedUserId,
+      this.docRef});
 
   fromJson(Map<String, dynamic> data) {
     this.email = data["email"];
@@ -36,6 +40,7 @@ class User {
     this.profilePicURL = data["profile_pic_url"];
     this.appVersion = data["app_version"];
     this.notifications = data["notifications"];
+    this.blockedUserId = data["blocker_user_id"] ?? <String>[];
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +53,7 @@ class User {
       'profile_pic_url': this.profilePicURL,
       'app_version': this.appVersion,
       'notifications': this.notifications,
+      'blocker_user_id': this.blockedUserId,
     };
   }
 

@@ -187,7 +187,11 @@ class EmailLogin extends BaseView {
                     width: ServiceProvider.instance.screenService
                         .getWidthByPercentage(context, 50),
                     height: ServiceProvider.instance.screenService
-                        .getHeightByPercentage(context, 5),
+                            .isLandscape(context)
+                        ? ServiceProvider.instance.screenService
+                            .getHeightByPercentage(context, 7.5)
+                        : ServiceProvider.instance.screenService
+                            .getHeightByPercentage(context, 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       color: ServiceProvider.instance.instanceStyleService

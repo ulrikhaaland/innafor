@@ -45,7 +45,7 @@ class RootPageController extends BaseController {
           profilePicURL: null,
           appVersion: 1,
           notifications: 0,
-          blockedUserId: <String>[],
+          blockedUserId: <dynamic>[],
           docRef: docSnap.reference,
         );
 

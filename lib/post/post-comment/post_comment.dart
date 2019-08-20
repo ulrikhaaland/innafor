@@ -8,7 +8,7 @@ import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:innafor/widgets/dialogs/innafor_dialog.dart';
+import 'package:innafor/widgets/popup/innafor_dialog.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -215,15 +215,23 @@ class PostComment extends BaseView {
                                           .appStyle
                                           .timestamp,
                                     ),
+                                    Container(
+                                      width: getDefaultPadding(context),
+                                    ),
                                     GestureDetector(
                                       onTap: () => controller.showBottomSheet(),
                                       child: Icon(
-                                        Icons.arrow_drop_down,
+                                        FontAwesomeIcons.ellipsisH,
                                         color: ServiceProvider
                                             .instance
                                             .instanceStyleService
                                             .appStyle
                                             .textGrey,
+                                        size: ServiceProvider
+                                            .instance
+                                            .instanceStyleService
+                                            .appStyle
+                                            .iconSizeSmall,
                                       ),
                                     ),
                                   ],

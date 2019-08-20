@@ -47,9 +47,9 @@ class PostImage extends BaseView {
 
     List<Widget> tabBarWidgets = <Widget>[];
     for (int i = 0; i < controller.imageList.length; i++) {
-      double left = 2.5;
-      double right = 2.5;
-      if (i == 0) left = 5;
+      double left = 5;
+      double right = 5;
+      if (i == 0) left = 7.5;
       if (i == controller.imageList.length - 1) right = 5;
       tabBarWidgets.add(Expanded(
         child: Padding(

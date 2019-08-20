@@ -74,7 +74,7 @@ class InstanceStyleService {
     );
 
     _appStyle.titleGrey = new TextStyle(
-        fontSize: screenHeight * 0.040 * factor,
+        fontSize: screenHeight * 0.030 * factor,
         fontFamily: 'Montserrat',
         // fontWeight: FontWeight.bold,
         fontStyle: FontStyle.normal,

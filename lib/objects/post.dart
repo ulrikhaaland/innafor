@@ -1,16 +1,20 @@
 import 'comment.dart';
 
 class Post {
-  int commentCount;
+  final String id;
   final List<dynamic> imgUrlList;
   final String message;
   final String title;
   final List<Comment> commentList;
+  final String uid;
+  final String userName;
 
   Post(
-      {this.commentList,
+      {this.id,
+      this.commentList,
       this.imgUrlList,
       this.message,
-      this.commentCount,
-      this.title});
+      this.title,
+      this.uid,
+      this.userName});
 }

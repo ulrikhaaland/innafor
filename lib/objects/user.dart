@@ -13,7 +13,7 @@ class User {
   double appVersion;
   int notifications;
   DateTime birthDate;
-  List<String> blockedUserId;
+  List<dynamic> blockedUserId;
   bool blocked;
   final DocumentReference docRef;
 
@@ -40,7 +40,7 @@ class User {
     this.profilePicURL = data["profile_pic_url"];
     this.appVersion = data["app_version"];
     this.notifications = data["notifications"];
-    this.blockedUserId = data["blocker_user_id"] ?? <String>[];
+    this.blockedUserId = data["blocker_user_id"] ?? <dynamic>[];
   }
 
   Map<String, dynamic> toJson() {

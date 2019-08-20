@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart' as prefix0;
 import 'package:innafor/app-bar/innafor_app_bar.dart';
 import 'package:innafor/objects/comment.dart';
 import 'package:innafor/objects/post.dart';
 import 'package:innafor/auth.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
+import 'package:innafor/objects/report_dialog_info.dart';
 import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post-comment/post_comment.dart';
 import 'package:innafor/post/post-image/post_image_container.dart';
@@ -13,7 +13,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:innafor/widgets/dialogs/report_dialog.dart';
+import 'package:innafor/widgets/popup/report_dialog.dart';
+import 'package:provider/provider.dart';
 import '../service/service_provider.dart';
 import '../helper.dart';
 
@@ -34,6 +35,8 @@ class PostPageController extends BaseController {
 
   bool loaded = false;
 
+  User user;
+
   bool showShadowOverlay = false;
 
   bool showComments = false;
@@ -45,7 +48,6 @@ class PostPageController extends BaseController {
   void initState() {
     super.initState();
     postList = <Post>[];
-    // SystemChrome.setEnabledSystemUIOverlays([]);
     getPost();
   }
 
@@ -61,6 +63,22 @@ class PostPageController extends BaseController {
     refresh();
   }
 
+  void showReport(ReportDialogInfo reportInfo) {
+    shadow(false);
+    _scaffoldKey.currentState.showBottomSheet(
+      (
+        context,
+      ) {
+        return ReportDialog(
+          controller: ReportDialogController(
+            onDone: () => shadow(true),
+            reportDialogInfo: reportInfo,
+          ),
+        );
+      },
+    );
+  }
+
   void getPost() async {
     QuerySnapshot postSnap =
         await Firestore.instance.collection("post").getDocuments();
@@ -68,11 +86,13 @@ class PostPageController extends BaseController {
     // Fetch posts
     postSnap.documents.forEach((postDoc) {
       Post post = Post(
+          id: postDoc.documentID,
           message: postDoc.data["message"],
           imgUrlList: postDoc.data["img"],
-          commentCount: postDoc.data["comments"],
           commentList: [],
-          title: postDoc.data["title"]);
+          title: postDoc.data["title"],
+          userName: postDoc.data["user_name"],
+          uid: postDoc.data["uid"]);
       postList.add(post);
 
       // Fetch comments for each post
@@ -143,9 +163,14 @@ class PostPage extends BaseView {
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
+
+    if (controller.user == null) controller.user = Provider.of<User>(context);
+
     double deviceHeight =
         ServiceProvider.instance.screenService.getHeight(context);
+
     print(deviceHeight);
+
     return Scaffold(
       key: controller._scaffoldKey,
       backgroundColor: Colors.white,
@@ -179,8 +204,20 @@ class PostPage extends BaseView {
                             ? PostImageContainer(
                                 controller: PostImageContainerController(
                                     thePost: controller.thePost,
+                                    openReport: () =>
+                                        controller.showReport(ReportDialogInfo(
+                                          reportedByUser: controller.user,
+                                          reportedUser: User(
+                                              id: controller.thePost.uid,
+                                              name:
+                                                  controller.thePost.userName),
+                                          reportType: ReportType.post,
+                                          id: controller.thePost.id,
+                                        )),
                                     hasLoaded: () {
-                                      if (controller.thePost.commentCount > 0) {
+                                      if (controller
+                                              .thePost.commentList.length >
+                                          0) {
                                         scrollScreen(
                                           height: 300,
                                           controller:
@@ -287,34 +324,18 @@ class PostPage extends BaseView {
                                 controller: PostCommentController(
                                     comment: c,
                                     showBottomSheet: () {
-                                      controller.shadow(false);
-                                      controller._scaffoldKey.currentState
-                                          .showBottomSheet(
-                                        (
-                                          context,
-                                        ) {
-                                          return ReportDialog(
-                                            controller: ReportDialogController(
-                                              userInView: User(
-                                                name: c.userName,
-                                                id: c.uid,
-                                              ),
-                                              comment: c,
-                                              onDone: () =>
-                                                  controller.shadow(true),
-                                            ),
-                                          );
-                                        },
+                                      controller.showReport(
+                                        ReportDialogInfo(
+                                            reportType: ReportType.comment,
+                                            reportedByUser: controller.user,
+                                            reportedUser: User(
+                                                id: c.uid, name: c.userName),
+                                            id: c.id),
                                       );
                                     }),
                               ))
                           .toList(),
                     ),
-                    // PostComment(
-                    //   controller: PostCommentController(
-                    //     comment: controller.thePost.commentList[0],
-                    //   ),
-                    // ),
                     Container(
                       height: ServiceProvider.instance.screenService
                           .getHeightByPercentage(context, 5),
@@ -327,7 +348,7 @@ class PostPage extends BaseView {
               onTap: () => controller.shadow(true),
               child: controller.showShadowOverlay
                   ? Container(
-                      height: 10000,
+                      height: 3000,
                       color: Color.fromRGBO(0, 0, 0, 0.5),
                     )
                   : Container(),

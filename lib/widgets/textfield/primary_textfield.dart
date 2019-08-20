@@ -25,6 +25,7 @@ class PrimaryTextField extends StatefulWidget {
   bool validate;
   final bool autoFocus;
   final bool obscure;
+  final bool autocorrect;
 
   PrimaryTextField(
       {Key key,
@@ -48,7 +49,8 @@ class PrimaryTextField extends StatefulWidget {
       this.hintText,
       this.validate,
       this.autoFocus,
-      this.obscure})
+      this.obscure,
+      this.autocorrect})
       : super(key: key);
 
   _PrimaryTextFieldState createState() => _PrimaryTextFieldState();
@@ -66,6 +68,7 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
             top: widget.paddingTop ?? 0,
             bottom: widget.paddingBottom ?? getDefaultPadding(context) * 2),
         child: TextFormField(
+          autocorrect: widget.autocorrect ?? false,
           obscureText: widget.obscure ?? false,
           autofocus: widget.autoFocus ?? false,
           controller: widget.textEditingController,

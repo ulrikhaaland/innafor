@@ -8,23 +8,18 @@ import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/helper.dart';
 import 'package:innafor/objects/comment.dart';
+import 'package:innafor/objects/report_dialog_info.dart';
 import 'package:innafor/objects/user.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:innafor/widgets/buttons/primary_button.dart';
 import 'package:provider/provider.dart';
 
 class ReportDialogController extends BaseController {
-  final User userInView;
-
-  User user;
-
-  bool userInViewblocked;
-
   final VoidCallback onDone;
 
-  final Comment comment;
+  final ReportDialogInfo reportDialogInfo;
 
-  ReportDialogController({this.userInView, this.comment, this.onDone});
+  ReportDialogController({this.onDone, this.reportDialogInfo});
 }
 
 class ReportDialog extends BaseView {
@@ -33,11 +28,9 @@ class ReportDialog extends BaseView {
   ReportDialog({this.controller});
   @override
   Widget build(BuildContext context) {
-    if (controller.user == null) {
-      controller.user = Provider.of<User>(context);
-      controller.userInView.blocked =
-          controller.user.blockedUserId.contains(controller.userInView.id);
-    }
+    controller.reportDialogInfo.reportedUser.blocked = controller
+        .reportDialogInfo.reportedByUser.blockedUserId
+        .contains(controller.reportDialogInfo.reportedUser.id);
 
     print(ServiceProvider.instance.screenService.isLandscape(context));
 
@@ -52,21 +45,20 @@ class ReportDialog extends BaseView {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                if (controller.userInView.blocked) {
-                  controller.user.blockedUserId
-                      .remove(controller.userInView.id);
-                  controller.userInView.blocked = false;
-                  controller.user.docRef
+                if (controller.reportDialogInfo.reportedUser.blocked) {
+                  controller.reportDialogInfo.reportedByUser.blockedUserId
+                      .remove(controller.reportDialogInfo.reportedUser.id);
+                  controller.reportDialogInfo.reportedByUser.docRef
                       .collection("blocked")
-                      .document(controller.userInView.id)
+                      .document(controller.reportDialogInfo.reportedUser.id)
                       .delete();
                 } else {
-                  controller.user.blockedUserId.add(controller.userInView.id);
-                  controller.userInView.blocked = true;
+                  controller.reportDialogInfo.reportedByUser.blockedUserId
+                      .add(controller.reportDialogInfo.reportedUser.id);
 
-                  controller.user.docRef
+                  controller.reportDialogInfo.reportedByUser.docRef
                       .collection("blocked")
-                      .document(controller.userInView.id)
+                      .document(controller.reportDialogInfo.reportedUser.id)
                       .setData({});
                 }
                 controller.onDone();
@@ -89,9 +81,9 @@ class ReportDialog extends BaseView {
                     ),
                     Flexible(
                       child: Text(
-                        controller.userInView.blocked
-                            ? "Fjern blokkering av ${controller.userInView.name} "
-                            : "Blokker ${controller.userInView.name}",
+                        controller.reportDialogInfo.reportedUser.blocked
+                            ? "Fjern blokkering av ${controller.reportDialogInfo.reportedUser.name ?? "N/A"} "
+                            : "Blokker ${controller.reportDialogInfo.reportedUser.name ?? "N/A"}",
                         style: ServiceProvider
                             .instance.instanceStyleService.appStyle.body2,
                         overflow: TextOverflow.ellipsis,
@@ -106,14 +98,7 @@ class ReportDialog extends BaseView {
             ),
             GestureDetector(
               onTap: () {
-                Firestore.instance
-                    .document("comment_reports/${controller.user.id}")
-                    .setData({
-                  "id": controller.comment.id,
-                  "comment_by": controller.userInView.id,
-                  "reported_by": controller.user.id,
-                  "timestamp": DateTime.now(),
-                });
+                controller.reportDialogInfo.pushReport();
                 controller.onDone();
               },
               child: Container(
@@ -133,7 +118,9 @@ class ReportDialog extends BaseView {
                       width: getDefaultPadding(context) * 4,
                     ),
                     Text(
-                      "Rapporter kommentar",
+                      controller.reportDialogInfo.typeString == "post"
+                          ? "Rapporter innlegg"
+                          : "Rapporter kommentar",
                       style: ServiceProvider
                           .instance.instanceStyleService.appStyle.body2,
                     ),

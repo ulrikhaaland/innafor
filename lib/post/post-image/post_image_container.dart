@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/objects/post.dart';
@@ -7,6 +8,8 @@ import 'package:innafor/post/post-image/post_video.dart';
 import 'package:innafor/post/post_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:innafor/service/service_provider.dart';
+import 'package:innafor/widgets/popup/snackbar.dart';
 
 import '../../helper.dart';
 
@@ -23,6 +26,10 @@ class PostImageContainerController extends BaseController {
 
   final VoidCallback hasLoaded;
 
+  final VoidCallback openReport;
+
+  final VoidCallback onSave;
+
   double imageWidth;
   double imageHeight;
 
@@ -32,7 +39,8 @@ class PostImageContainerController extends BaseController {
 
   bool video = false;
 
-  PostImageContainerController({this.hasLoaded, this.thePost});
+  PostImageContainerController(
+      {this.hasLoaded, this.thePost, this.openReport, this.onSave});
 
   @override
   void initState() {
@@ -115,6 +123,34 @@ class PostImageContainer extends BaseView {
                   controller: controller.postContainerController,
                 )
               : Container(),
+          Positioned(
+            top: 30,
+            right: 30,
+            child: GestureDetector(
+              onTap: () => controller.openReport(),
+              child: Icon(
+                FontAwesomeIcons.ellipsisH,
+                color: Colors.white,
+                size: ServiceProvider
+                    .instance.instanceStyleService.appStyle.iconSizeSmall,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 80,
+            right: 30,
+            child: GestureDetector(
+              onTap: () {
+                showSnackBar("Innlegget er lagret i dine bokmerker", context);
+              },
+              child: Icon(
+                FontAwesomeIcons.solidSave,
+                color: Colors.white,
+                size: ServiceProvider
+                    .instance.instanceStyleService.appStyle.iconSizeSmall,
+              ),
+            ),
+          ),
         ],
       ),
     );

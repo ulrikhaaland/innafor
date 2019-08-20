@@ -76,7 +76,7 @@ class PostContainer extends BaseView {
                             child: IconButton(
                               padding: EdgeInsets.only(
                                   left: getDefaultPadding(context) * 2),
-                              icon: controller.thePost.commentCount > 0
+                              icon: controller.thePost.commentList.length > 0
                                   ? Icon(
                                       controller.expanded
                                           ? FontAwesomeIcons.minus

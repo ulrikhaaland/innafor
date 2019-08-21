@@ -35,8 +35,7 @@ class ReportDialog extends BaseView {
     print(ServiceProvider.instance.screenService.isLandscape(context));
 
     return Container(
-      height: ServiceProvider.instance.screenService
-          .getHeightByPercentage(context, 30),
+      height: 220,
       width: ServiceProvider.instance.screenService.getWidth(context),
       color: ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
       child: Padding(
@@ -130,7 +129,9 @@ class ReportDialog extends BaseView {
             ),
             PrimaryButton(
               controller: PrimaryButtonController(
-                  text: "Avbryt", onPressed: () => controller.onDone()),
+                  text: "Avbryt",
+                  onPressed: () => controller.onDone(),
+                  bottomPadding: 0),
             )
           ],
         ),

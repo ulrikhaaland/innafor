@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' as prefix0;
 import 'package:innafor/app-bar/innafor_app_bar.dart';
 import 'package:innafor/objects/comment.dart';
 import 'package:innafor/objects/post.dart';
@@ -7,12 +8,14 @@ import 'package:innafor/base_view.dart';
 import 'package:innafor/objects/report_dialog_info.dart';
 import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post-comment/post_comment.dart';
+import 'package:innafor/post/post-comment/post_comment_container.dart';
 import 'package:innafor/post/post-image/post_image_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:innafor/widgets/buttons/fab.dart';
 import 'package:innafor/widgets/popup/report_dialog.dart';
 import 'package:provider/provider.dart';
 import '../service/service_provider.dart';
@@ -43,12 +46,21 @@ class PostPageController extends BaseController {
 
   double imgContainerWidth;
 
+  FabController fabController;
+
+  double deviceHeight;
+
   PostPageController({this.auth});
   @override
   void initState() {
-    super.initState();
+    fabController = FabController(
+      showFab: false,
+      onPressed: () => print("New COMMENT"),
+    );
+    setScrollListener();
     postList = <Post>[];
     getPost();
+    super.initState();
   }
 
   @override
@@ -61,6 +73,22 @@ class PostPageController extends BaseController {
     showShadowOverlay = !showShadowOverlay;
     if (pop) Navigator.pop(context);
     refresh();
+  }
+
+  void setScrollListener() {
+    scrollController.addListener(() {
+      if (scrollController.offset > 50 && showComments) {
+        if (!fabController.showFab) {
+          fabController.showFab = true;
+          fabController.refresh();
+        }
+      } else {
+        if (fabController.showFab) {
+          fabController.showFab = false;
+          fabController.refresh();
+        }
+      }
+    });
   }
 
   void showReport(ReportDialogInfo reportInfo) {
@@ -166,14 +194,18 @@ class PostPage extends BaseView {
 
     if (controller.user == null) controller.user = Provider.of<User>(context);
 
-    double deviceHeight =
-        ServiceProvider.instance.screenService.getHeight(context);
-
-    print(deviceHeight);
+    if (controller.deviceHeight == null)
+      controller.deviceHeight =
+          ServiceProvider.instance.screenService.getHeight(context);
 
     return Scaffold(
       key: controller._scaffoldKey,
       backgroundColor: Colors.white,
+      floatingActionButton: Fab(
+        controller: controller.fabController,
+      ),
+      floatingActionButtonLocation:
+          prefix0.FloatingActionButtonLocation.endFloat,
       body: SingleChildScrollView(
         controller: controller.scrollController,
         child: Stack(
@@ -182,7 +214,7 @@ class PostPage extends BaseView {
               child: Column(
                 children: <Widget>[
                   Container(
-                    height: deviceHeight > 750
+                    height: controller.deviceHeight > 750
                         ? ServiceProvider.instance.screenService
                             .getHeightByPercentage(context, 90)
                         : ServiceProvider.instance.screenService
@@ -190,7 +222,7 @@ class PostPage extends BaseView {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        deviceHeight > 750
+                        controller.deviceHeight > 750
                             ? Container(
                                 height: ServiceProvider.instance.screenService
                                     .getHeightByPercentage(context, 2.5),
@@ -262,85 +294,12 @@ class PostPage extends BaseView {
                       ],
                     ),
                   ),
-                  if (controller.thePost.commentList.length > 0)
-                    GestureDetector(
-                      onTap: () {
-                        double height;
-                        controller.showComments = !controller.showComments;
-
-                        controller.refresh();
-                        if (controller.showComments) {
-                          deviceHeight > 750
-                              ? height = ServiceProvider.instance.screenService
-                                  .getHeightByPercentage(context, 85)
-                              : height = ServiceProvider.instance.screenService
-                                  .getHeightByPercentage(context, 100);
-                        } else {
-                          height = 0;
-                        }
-                        scrollScreen(
-                            height: height,
-                            controller: controller.scrollController,
-                            timeBeforeAction: 100);
-                      },
-                      child: Card(
-                        color: ServiceProvider
-                            .instance.instanceStyleService.appStyle.leBleu,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(12))),
-                        child: Container(
-                          height: ServiceProvider.instance.screenService
-                              .getHeightByPercentage(context, 5),
-                          width: ServiceProvider.instance.screenService
-                              .getWidthByPercentage(context, 50),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                controller.showComments
-                                    ? Icons.arrow_drop_up
-                                    : Icons.arrow_drop_down,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                controller.showComments
-                                    ? "Skjul kommentarer"
-                                    : "Vis kommentarer",
-                                style: ServiceProvider.instance
-                                    .instanceStyleService.appStyle.body1,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  else
-                    Container(),
-                  if (controller.showComments) ...[
-                    Column(
-                      children: controller.thePost.commentList
-                          .map((c) => PostComment(
-                                controller: PostCommentController(
-                                    comment: c,
-                                    showBottomSheet: () {
-                                      controller.showReport(
-                                        ReportDialogInfo(
-                                            reportType: ReportType.comment,
-                                            reportedByUser: controller.user,
-                                            reportedUser: User(
-                                                id: c.uid, name: c.userName),
-                                            id: c.id),
-                                      );
-                                    }),
-                              ))
-                          .toList(),
+                  PostCommentContainer(
+                    controller: PostCommentContainerController(
+                      postPageController: controller,
+                      show: (isShowing) => controller.showComments = isShowing,
                     ),
-                    Container(
-                      height: ServiceProvider.instance.screenService
-                          .getHeightByPercentage(context, 5),
-                    ),
-                  ],
+                  )
                 ],
               ),
             ),

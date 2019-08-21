@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 class User {
   String name;
@@ -13,7 +10,7 @@ class User {
   double appVersion;
   int notifications;
   DateTime birthDate;
-  List<dynamic> blockedUserId;
+  List<String> blockedUserId;
   bool blocked;
   final DocumentReference docRef;
 
@@ -40,7 +37,7 @@ class User {
     this.profilePicURL = data["profile_pic_url"];
     this.appVersion = data["app_version"];
     this.notifications = data["notifications"];
-    this.blockedUserId = data["blocker_user_id"] ?? <dynamic>[];
+    this.blockedUserId = data["blocker_user_id"]?.cast<String>() ?? <String>[];
   }
 
   Map<String, dynamic> toJson() {

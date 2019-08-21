@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/objects/post.dart';
+import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post-image/post_image.dart';
 import 'package:innafor/post/post-image/post_video.dart';
 import 'package:innafor/post/post_container.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:innafor/widgets/popup/snackbar.dart';
+import 'package:provider/provider.dart';
 
 import '../../helper.dart';
 
@@ -142,9 +144,14 @@ class PostImageContainer extends BaseView {
             child: GestureDetector(
               onTap: () {
                 showSnackBar("Innlegget er lagret i dine bokmerker", context);
+                User user = Provider.of<User>(context);
+                user.docRef
+                    .collection("bookmark")
+                    .document(controller.thePost.id)
+                    .setData({});
               },
               child: Icon(
-                FontAwesomeIcons.solidSave,
+                FontAwesomeIcons.solidBookmark,
                 color: Colors.white,
                 size: ServiceProvider
                     .instance.instanceStyleService.appStyle.iconSizeSmall,

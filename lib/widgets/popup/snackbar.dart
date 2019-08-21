@@ -8,7 +8,8 @@ showSnackBar(String message, BuildContext context) {
       backgroundColor:
           ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
       content: Container(
-        height: 80,
+        height: ServiceProvider.instance.screenService
+            .getHeightByPercentage(context, 12.5),
         width: ServiceProvider.instance.screenService.getWidth(context),
         child: Padding(
           padding: EdgeInsets.all(getDefaultPadding(context)),

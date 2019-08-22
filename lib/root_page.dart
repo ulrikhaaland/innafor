@@ -1,3 +1,4 @@
+import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:innafor/post/post_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,7 +43,7 @@ class RootPageController extends BaseController {
           id: _firebaseUser.uid,
           fcm: null,
           bio: null,
-          profilePicURL: null,
+          imageUrl: null,
           appVersion: 1,
           notifications: 0,
           blockedUserId: <String>[],

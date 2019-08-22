@@ -69,8 +69,8 @@ class PostCommentContainer extends BaseView {
                   child: Container(
                     height: ServiceProvider.instance.screenService
                         .getHeightByPercentage(context, 5),
-                    width: ServiceProvider.instance.screenService
-                        .getWidthByPercentage(context, 50),
+                    // width: ServiceProvider.instance.screenService
+                    //     .getWidthByPercentage(context, 50),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[

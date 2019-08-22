@@ -10,6 +10,11 @@ class FabController extends BaseController {
   final VoidCallback onPressed;
 
   FabController({this.showFab, this.onPressed});
+
+  void showFabAsMethod(bool show) {
+    showFab = show;
+    refresh();
+  }
 }
 
 class Fab extends BaseView {

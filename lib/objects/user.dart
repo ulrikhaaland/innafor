@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 
 class User {
   String name;
@@ -6,26 +8,28 @@ class User {
   String email;
   String fcm;
   String bio;
-  String profilePicURL;
+  String imageUrl;
   double appVersion;
   int notifications;
   DateTime birthDate;
   List<String> blockedUserId;
   bool blocked;
+  Widget profileImageWidget;
   final DocumentReference docRef;
 
   final Firestore _firestoreInstance = Firestore.instance;
-  User(
-      {this.email,
-      this.id,
-      this.name,
-      this.fcm,
-      this.bio,
-      this.profilePicURL,
-      this.appVersion,
-      this.notifications,
-      this.blockedUserId,
-      this.docRef});
+  User({
+    this.email,
+    this.id,
+    this.name,
+    this.fcm,
+    this.bio,
+    this.imageUrl,
+    this.appVersion,
+    this.notifications,
+    this.blockedUserId,
+    this.docRef,
+  });
 
   fromJson(Map<String, dynamic> data) {
     this.email = data["email"];
@@ -34,7 +38,7 @@ class User {
     this.email = data["email"];
     this.fcm = data["fcm"];
     this.bio = data["bio"];
-    this.profilePicURL = data["profile_pic_url"];
+    this.imageUrl = data["image_url"];
     this.appVersion = data["app_version"];
     this.notifications = data["notifications"];
     this.blockedUserId = data["blocker_user_id"]?.cast<String>() ?? <String>[];
@@ -47,7 +51,7 @@ class User {
       'email': this.email,
       'fcm': this.fcm,
       'bio': this.bio,
-      'profile_pic_url': this.profilePicURL,
+      'image_url': this.imageUrl,
       'app_version': this.appVersion,
       'notifications': this.notifications,
       'blocker_user_id': this.blockedUserId,

@@ -58,7 +58,7 @@ class InstanceStyleService {
     );
 
     _appStyle.secondaryTitle = new TextStyle(
-      fontSize: screenHeight * 0.030 * factor,
+      fontSize: screenHeight * 0.028 * factor,
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
@@ -74,14 +74,14 @@ class InstanceStyleService {
     );
 
     _appStyle.titleGrey = new TextStyle(
-        fontSize: screenHeight * 0.030 * factor,
+        fontSize: screenHeight * 0.024 * factor,
         fontFamily: 'Montserrat',
         // fontWeight: FontWeight.bold,
         fontStyle: FontStyle.normal,
         color: _appStyle.textGrey);
 
     _appStyle.titleWhite = new TextStyle(
-        fontSize: screenHeight * 0.030 * factor,
+        fontSize: screenHeight * 0.024 * factor,
         fontFamily: 'Montserrat',
         fontWeight: FontWeight.bold,
         fontStyle: FontStyle.normal,
@@ -89,7 +89,7 @@ class InstanceStyleService {
 
     _appStyle.body1 = new TextStyle(
       fontFamily: "Montserrat",
-      fontSize: screenHeight * 0.020 * factor,
+      fontSize: screenHeight * 0.024 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: Colors.white,
@@ -104,7 +104,7 @@ class InstanceStyleService {
 
     _appStyle.confirm = new TextStyle(
       fontFamily: "Asap",
-      fontSize: screenHeight * 0.020 * factor,
+      fontSize: screenHeight * 0.024 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: _appStyle.mountbattenPink,
@@ -112,7 +112,7 @@ class InstanceStyleService {
 
     _appStyle.cancel = new TextStyle(
       fontFamily: "Asap",
-      fontSize: screenHeight * 0.020 * factor,
+      fontSize: screenHeight * 0.024 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: _appStyle.imperial,
@@ -120,14 +120,14 @@ class InstanceStyleService {
 
     _appStyle.body1Black = new TextStyle(
       fontFamily: "Montserrat",
-      fontSize: screenHeight * 0.020 * factor,
+      fontSize: screenHeight * 0.024 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: Colors.black,
     );
 
     _appStyle.body1Bold = new TextStyle(
-      fontSize: screenHeight * 0.020 * factor,
+      fontSize: screenHeight * 0.024 * factor,
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
       color: _appStyle.textGrey,
@@ -141,13 +141,21 @@ class InstanceStyleService {
     );
 
     _appStyle.body1Light = new TextStyle(
-        fontSize: screenHeight * 0.020 * factor,
+        fontSize: screenHeight * 0.024 * factor,
         fontFamily: "Montserrat",
         fontWeight: FontWeight.normal,
         fontStyle: FontStyle.normal,
         color: Colors.white);
 
     _appStyle.body2 = new TextStyle(
+      fontSize: screenHeight * 0.024 * factor,
+      fontFamily: "Montserrat",
+      fontWeight: FontWeight.normal,
+      fontStyle: FontStyle.normal,
+      color: _appStyle.textGrey,
+    );
+
+    _appStyle.body1Grey = new TextStyle(
       fontSize: screenHeight * 0.024 * factor,
       fontFamily: "Montserrat",
       fontWeight: FontWeight.normal,
@@ -203,6 +211,14 @@ class InstanceStyleService {
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: Colors.white,
+    );
+
+    _appStyle.coloredText = new TextStyle(
+      fontFamily: "Montserrat",
+      fontSize: screenHeight * 0.024 * factor,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+      color: appStyle.imperial,
     );
 
     _appStyle.iconSizeSmall = screenHeight * 0.031 * factor;

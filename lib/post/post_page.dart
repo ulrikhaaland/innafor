@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart' as prefix0;
+import 'dart:async';
+
+import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:innafor/app-bar/innafor_app_bar.dart';
 import 'package:innafor/objects/comment.dart';
 import 'package:innafor/objects/post.dart';
@@ -9,6 +11,7 @@ import 'package:innafor/objects/report_dialog_info.dart';
 import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post-comment/post_comment.dart';
 import 'package:innafor/post/post-comment/post_comment_container.dart';
+import 'package:innafor/post/post-comment/post_new_comment.dart';
 import 'package:innafor/post/post-image/post_image_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -50,13 +53,39 @@ class PostPageController extends BaseController {
 
   double deviceHeight;
 
+  Widget x;
+
   PostPageController({this.auth});
   @override
   void initState() {
     fabController = FabController(
-      showFab: false,
-      onPressed: () => print("New COMMENT"),
-    );
+        showFab: false,
+        onPressed: () {
+          shadow(false);
+          fabController.showFabAsMethod(false);
+          _scaffoldKey.currentState
+              .showBottomSheet((context) {
+                return PostNewComment(
+                  controller: PostNewCommentController(
+                      userImage: user.profileImageWidget, onDisposed: () {}),
+                );
+              })
+              .closed
+              .then((v) {
+                if (showShadowOverlay) {
+                  shadow(false);
+                }
+                Timer(Duration(milliseconds: 170),
+                    () => fabController.showFabAsMethod(true));
+              });
+        }
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) => PostNewComment(
+        //     controller:
+        //         PostNewCommentController(userImage: user.profileImageWidget),
+        //   ),
+        // )),
+        );
     setScrollListener();
     postList = <Post>[];
     getPost();
@@ -77,7 +106,8 @@ class PostPageController extends BaseController {
 
   void setScrollListener() {
     scrollController.addListener(() {
-      if (scrollController.offset > 50 && showComments) {
+      if ((scrollController.offset > 50 && showComments) &&
+          !showShadowOverlay) {
         if (!fabController.showFab) {
           fabController.showFab = true;
           fabController.refresh();
@@ -93,18 +123,27 @@ class PostPageController extends BaseController {
 
   void showReport(ReportDialogInfo reportInfo) {
     shadow(false);
-    _scaffoldKey.currentState.showBottomSheet(
-      (
-        context,
-      ) {
-        return ReportDialog(
-          controller: ReportDialogController(
-            onDone: () => shadow(true),
-            reportDialogInfo: reportInfo,
-          ),
-        );
-      },
-    );
+    _scaffoldKey.currentState
+        .showBottomSheet(
+          (
+            context,
+          ) {
+            return ReportDialog(
+              controller: ReportDialogController(
+                onDone: () => shadow(true),
+                reportDialogInfo: reportInfo,
+              ),
+            );
+          },
+        )
+        .closed
+        .then((v) {
+          if (showShadowOverlay) shadow(false);
+        });
+  }
+
+  setProfileImage() {
+    user.profileImageWidget = x;
   }
 
   void getPost() async {
@@ -198,18 +237,28 @@ class PostPage extends BaseView {
       controller.deviceHeight =
           ServiceProvider.instance.screenService.getHeight(context);
 
+    controller.x = CircleAvatar(
+      radius: ServiceProvider.instance.screenService
+          .getWidthByPercentage(context, 7.5),
+      backgroundColor: Colors.transparent,
+      backgroundImage:
+          AdvancedNetworkImage(controller.user.imageUrl, loadedCallback: () {
+        controller.setProfileImage();
+      }),
+    );
+
     return Scaffold(
       key: controller._scaffoldKey,
       backgroundColor: Colors.white,
       floatingActionButton: Fab(
         controller: controller.fabController,
       ),
-      floatingActionButtonLocation:
-          prefix0.FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SingleChildScrollView(
         controller: controller.scrollController,
         child: Stack(
           children: <Widget>[
+            Positioned(left: 100, top: 300, child: controller.x),
             Center(
               child: Column(
                 children: <Widget>[

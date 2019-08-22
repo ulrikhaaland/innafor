@@ -43,7 +43,8 @@ class AppStyle {
       this.italic,
       this.timestamp,
       this.iconSizeExtraSmall,
-      this.titleGrey});
+      this.titleGrey,
+      this.coloredText});
 
   Color themeColor;
   Color backgroundColor;
@@ -58,6 +59,7 @@ class AppStyle {
   Color titleOneColor;
   Color card;
 
+  TextStyle coloredText;
   TextStyle timestamp;
   TextStyle iconFloatText;
   TextStyle italic;
@@ -82,6 +84,7 @@ class AppStyle {
   TextStyle body1;
   TextStyle body1Bold;
   TextStyle body1Light;
+  TextStyle body1Grey;
   TextStyle body2;
   TextStyle numberHead1;
   TextStyle numberHead2;

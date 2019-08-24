@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'comment.dart';
 
 class Post {
@@ -8,6 +10,8 @@ class Post {
   final List<Comment> commentList;
   final String uid;
   final String userName;
+  final String userNameId;
+  final DocumentReference docRef;
 
   Post(
       {this.id,
@@ -16,5 +20,7 @@ class Post {
       this.message,
       this.title,
       this.uid,
-      this.userName});
+      this.userName,
+      this.docRef,
+      this.userNameId});
 }

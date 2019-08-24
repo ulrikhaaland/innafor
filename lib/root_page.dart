@@ -39,6 +39,8 @@ class RootPageController extends BaseController {
           await Firestore.instance.document("users/${_firebaseUser.uid}").get();
       if (!docSnap.exists) {
         _user = User(
+          userName: "",
+          userNameId: "",
           email: _firebaseUser.email,
           id: _firebaseUser.uid,
           fcm: null,
@@ -157,12 +159,20 @@ class RootPage extends BaseView {
         ),
       );
     } else {
-      return Provider.value(
-        value: controller._user,
-        child: PostPage(
-          controller: PostPageController(
-            auth: controller._auth,
+      PostPageController postPageController = PostPageController(
+        auth: controller._auth,
+      );
+      return MultiProvider(
+        providers: [
+          Provider<User>.value(
+            value: controller._user,
           ),
+          Provider<PostPageController>.value(
+            value: postPageController,
+          ),
+        ],
+        child: PostPage(
+          controller: postPageController,
         ),
       );
     }

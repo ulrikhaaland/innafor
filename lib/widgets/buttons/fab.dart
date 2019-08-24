@@ -7,9 +7,11 @@ import 'package:innafor/service/service_provider.dart';
 class FabController extends BaseController {
   bool showFab;
 
+  final IconData iconData;
+
   final VoidCallback onPressed;
 
-  FabController({this.showFab, this.onPressed});
+  FabController({this.iconData, this.showFab, this.onPressed});
 
   void showFabAsMethod(bool show) {
     showFab = show;
@@ -28,7 +30,7 @@ class Fab extends BaseView {
         backgroundColor:
             ServiceProvider.instance.instanceStyleService.appStyle.leBleu,
         child: Icon(
-          FontAwesomeIcons.solidComment,
+          controller.iconData ?? FontAwesomeIcons.solidComment,
           color: Colors.white,
           size: ServiceProvider
               .instance.instanceStyleService.appStyle.iconSizeStandard,

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 
 class User {
-  String name;
+  String userName;
+  String userNameId;
   String id;
   String email;
   String fcm;
@@ -11,6 +12,7 @@ class User {
   String imageUrl;
   double appVersion;
   int notifications;
+  double rating;
   DateTime birthDate;
   List<String> blockedUserId;
   bool blocked;
@@ -18,36 +20,40 @@ class User {
   final DocumentReference docRef;
 
   final Firestore _firestoreInstance = Firestore.instance;
-  User({
-    this.email,
-    this.id,
-    this.name,
-    this.fcm,
-    this.bio,
-    this.imageUrl,
-    this.appVersion,
-    this.notifications,
-    this.blockedUserId,
-    this.docRef,
-  });
+  User(
+      {this.email,
+      this.id,
+      this.userName,
+      this.fcm,
+      this.bio,
+      this.imageUrl,
+      this.appVersion,
+      this.notifications,
+      this.blockedUserId,
+      this.docRef,
+      this.rating,
+      this.userNameId});
 
   fromJson(Map<String, dynamic> data) {
     this.email = data["email"];
     this.id = data["id"];
-    this.name = data["name"];
+    this.userName = data["name"];
     this.email = data["email"];
     this.fcm = data["fcm"];
     this.bio = data["bio"];
     this.imageUrl = data["image_url"];
     this.appVersion = data["app_version"];
     this.notifications = data["notifications"];
-    this.blockedUserId = data["blocker_user_id"]?.cast<String>() ?? <String>[];
+    this.blockedUserId = [];
+    // data["blocker_user_id"]?.cast<String>() ?? <String>[];
+    this.rating = data["rating"];
+    this.userNameId = data["user_name_id"];
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': this.id,
-      'name': this.name,
+      'name': this.userName,
       'email': this.email,
       'fcm': this.fcm,
       'bio': this.bio,
@@ -55,6 +61,8 @@ class User {
       'app_version': this.appVersion,
       'notifications': this.notifications,
       'blocker_user_id': this.blockedUserId,
+      'rating': this.rating,
+      'user_name_id': this.userNameId,
     };
   }
 

@@ -44,7 +44,8 @@ class AppStyle {
       this.timestamp,
       this.iconSizeExtraSmall,
       this.titleGrey,
-      this.coloredText});
+      this.coloredText,
+      this.disabledColoredText});
 
   Color themeColor;
   Color backgroundColor;
@@ -59,6 +60,7 @@ class AppStyle {
   Color titleOneColor;
   Color card;
 
+  TextStyle disabledColoredText;
   TextStyle coloredText;
   TextStyle timestamp;
   TextStyle iconFloatText;
@@ -86,6 +88,7 @@ class AppStyle {
   TextStyle body1Light;
   TextStyle body1Grey;
   TextStyle body2;
+  TextStyle body1BlackBig;
   TextStyle numberHead1;
   TextStyle numberHead2;
   TextStyle keyLabel;

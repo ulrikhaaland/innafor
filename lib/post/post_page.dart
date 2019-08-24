@@ -9,7 +9,6 @@ import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/objects/report_dialog_info.dart';
 import 'package:innafor/objects/user.dart';
-import 'package:innafor/post/post-comment/post_comment.dart';
 import 'package:innafor/post/post-comment/post_comment_container.dart';
 import 'package:innafor/post/post-comment/post_new_comment.dart';
 import 'package:innafor/post/post-image/post_image_container.dart';
@@ -19,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:innafor/widgets/buttons/fab.dart';
-import 'package:innafor/widgets/popup/report_dialog.dart';
+import 'package:innafor/widgets/popup/main_dialog.dart';
 import 'package:provider/provider.dart';
 import '../service/service_provider.dart';
 import '../helper.dart';
@@ -67,7 +66,9 @@ class PostPageController extends BaseController {
               .showBottomSheet((context) {
                 return PostNewComment(
                   controller: PostNewCommentController(
-                      userImage: user.profileImageWidget, onDisposed: () {}),
+                    user: user,
+                    thePost: thePost,
+                  ),
                 );
               })
               .closed
@@ -122,14 +123,17 @@ class PostPageController extends BaseController {
   }
 
   void showReport(ReportDialogInfo reportInfo) {
+    fabController.showFab = false;
     shadow(false);
     _scaffoldKey.currentState
         .showBottomSheet(
           (
             context,
           ) {
-            return ReportDialog(
-              controller: ReportDialogController(
+            return MainDialog(
+              controller: MainDialogController(
+                dialogContentType: DialogContentType.report,
+                divide: true,
                 onDone: () => shadow(true),
                 reportDialogInfo: reportInfo,
               ),
@@ -138,6 +142,10 @@ class PostPageController extends BaseController {
         )
         .closed
         .then((v) {
+          if (showComments)
+            Timer(Duration(milliseconds: 170),
+                () => fabController.showFabAsMethod(true));
+
           if (showShadowOverlay) shadow(false);
         });
   }
@@ -159,7 +167,9 @@ class PostPageController extends BaseController {
           commentList: [],
           title: postDoc.data["title"],
           userName: postDoc.data["user_name"],
-          uid: postDoc.data["uid"]);
+          userNameId: postDoc.data["user_name_id"],
+          uid: postDoc.data["uid"],
+          docRef: postDoc.reference);
       postList.add(post);
 
       // Fetch comments for each post
@@ -175,7 +185,6 @@ class PostPageController extends BaseController {
               id: cd.documentID,
               text: cd.data["text"],
               timestamp: cd.data["timestamp"].toDate(),
-              commentCount: cd.data["comment_count"],
               favoriteIds: <String>[],
               children: <Comment>[],
               isChildOfId: cd.data["is_child_of_id"] ?? "0",
@@ -290,7 +299,7 @@ class PostPage extends BaseView {
                                           reportedByUser: controller.user,
                                           reportedUser: User(
                                               id: controller.thePost.uid,
-                                              name:
+                                              userName:
                                                   controller.thePost.userName),
                                           reportType: ReportType.post,
                                           id: controller.thePost.id,
@@ -347,6 +356,7 @@ class PostPage extends BaseView {
                     controller: PostCommentContainerController(
                       postPageController: controller,
                       show: (isShowing) => controller.showComments = isShowing,
+                      user: controller.user,
                     ),
                   )
                 ],

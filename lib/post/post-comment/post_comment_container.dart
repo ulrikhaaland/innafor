@@ -8,6 +8,7 @@ import 'package:innafor/objects/report_dialog_info.dart';
 import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post_page.dart';
 import 'package:innafor/service/service_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../helper.dart';
 import 'post_comment.dart';
@@ -18,8 +19,10 @@ class PostCommentContainerController extends BaseController {
   final PostPageController postPageController;
 
   final void Function(bool showComments) show;
+  final User user;
 
-  PostCommentContainerController({this.postPageController, this.show});
+  PostCommentContainerController(
+      {this.postPageController, this.show, this.user});
 }
 
 class PostCommentContainer extends BaseView {
@@ -99,6 +102,8 @@ class PostCommentContainer extends BaseView {
                 children: controller.postPageController.thePost.commentList
                     .map((c) => PostComment(
                           controller: PostCommentController(
+                              commentType: CommentType.topLevel,
+                              user: controller.user,
                               comment: c,
                               showBottomSheet: () {
                                 controller.postPageController.showReport(
@@ -107,7 +112,7 @@ class PostCommentContainer extends BaseView {
                                       reportedByUser:
                                           controller.postPageController.user,
                                       reportedUser:
-                                          User(id: c.uid, name: c.userName),
+                                          User(id: c.uid, userName: c.userName),
                                       id: c.id),
                                 );
                               }),

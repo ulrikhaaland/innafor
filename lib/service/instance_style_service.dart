@@ -66,9 +66,9 @@ class InstanceStyleService {
     );
 
     _appStyle.smallTitle = new TextStyle(
-      fontSize: screenHeight * 0.024 * factor,
+      fontSize: screenHeight * 0.026 * factor,
       fontFamily: 'Montserrat',
-      fontWeight: FontWeight.normal,
+      fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
       color: Colors.black,
     );
@@ -121,6 +121,14 @@ class InstanceStyleService {
     _appStyle.body1Black = new TextStyle(
       fontFamily: "Montserrat",
       fontSize: screenHeight * 0.024 * factor,
+      fontWeight: FontWeight.normal,
+      fontStyle: FontStyle.normal,
+      color: Colors.black,
+    );
+
+    _appStyle.body1BlackBig = new TextStyle(
+      fontFamily: "Montserrat",
+      fontSize: screenHeight * 0.030 * factor,
       fontWeight: FontWeight.normal,
       fontStyle: FontStyle.normal,
       color: Colors.black,
@@ -219,6 +227,14 @@ class InstanceStyleService {
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
       color: appStyle.imperial,
+    );
+
+    _appStyle.disabledColoredText = new TextStyle(
+      fontFamily: "Montserrat",
+      fontSize: screenHeight * 0.024 * factor,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+      color: appStyle.textGrey,
     );
 
     _appStyle.iconSizeSmall = screenHeight * 0.031 * factor;

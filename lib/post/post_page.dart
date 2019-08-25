@@ -122,19 +122,19 @@ class PostPageController extends BaseController {
     });
   }
 
-  void showReport(ReportDialogInfo reportInfo) {
+  void showReport(ReportDialogInfo reportInfo, BuildContext contextt,
+      {GlobalKey scaffoldKey}) {
     fabController.showFab = false;
     shadow(false);
     _scaffoldKey.currentState
         .showBottomSheet(
           (
-            context,
+            contextt,
           ) {
             return MainDialog(
               controller: MainDialogController(
                 dialogContentType: DialogContentType.report,
                 divide: true,
-                onDone: () => shadow(true),
                 reportDialogInfo: reportInfo,
               ),
             );
@@ -191,6 +191,7 @@ class PostPageController extends BaseController {
               userImageUrl: cd.data["user_image_url"],
               userName: cd.data["user_name"],
               uid: cd.data["uid"],
+              userNameId: cd.data["user_name_id"],
               docRef: cd.reference);
           print(cd.reference.toString());
           // Get user id's for comment favorites
@@ -294,8 +295,8 @@ class PostPage extends BaseView {
                             ? PostImageContainer(
                                 controller: PostImageContainerController(
                                     thePost: controller.thePost,
-                                    openReport: () =>
-                                        controller.showReport(ReportDialogInfo(
+                                    openReport: () => controller.showReport(
+                                        ReportDialogInfo(
                                           reportedByUser: controller.user,
                                           reportedUser: User(
                                               id: controller.thePost.uid,
@@ -303,7 +304,8 @@ class PostPage extends BaseView {
                                                   controller.thePost.userName),
                                           reportType: ReportType.post,
                                           id: controller.thePost.id,
-                                        )),
+                                        ),
+                                        context),
                                     hasLoaded: () {
                                       if (controller
                                               .thePost.commentList.length >

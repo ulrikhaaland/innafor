@@ -102,20 +102,11 @@ class PostCommentContainer extends BaseView {
                 children: controller.postPageController.thePost.commentList
                     .map((c) => PostComment(
                           controller: PostCommentController(
-                              commentType: CommentType.topLevel,
-                              user: controller.user,
-                              comment: c,
-                              showBottomSheet: () {
-                                controller.postPageController.showReport(
-                                  ReportDialogInfo(
-                                      reportType: ReportType.comment,
-                                      reportedByUser:
-                                          controller.postPageController.user,
-                                      reportedUser:
-                                          User(id: c.uid, userName: c.userName),
-                                      id: c.id),
-                                );
-                              }),
+                            commentType: CommentType.topLevel,
+                            postPageController: controller.postPageController,
+                            user: controller.user,
+                            comment: c,
+                          ),
                         ))
                     .toList(),
               ),

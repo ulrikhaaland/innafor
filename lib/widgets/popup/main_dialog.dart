@@ -18,8 +18,6 @@ import 'package:provider/provider.dart';
 enum DialogContentType { report, undefined }
 
 class MainDialogController extends BaseController {
-  final VoidCallback onDone;
-
   final ReportDialogInfo reportDialogInfo;
 
   final List<Widget> bar;
@@ -30,8 +28,7 @@ class MainDialogController extends BaseController {
   final DialogContentType dialogContentType;
 
   MainDialogController(
-      {this.onDone,
-      this.reportDialogInfo,
+      {this.reportDialogInfo,
       this.bar,
       this.body,
       this.divide,

@@ -69,10 +69,13 @@ class PostCommentPage extends BaseView {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: getDefaultPadding(context) * 4),
-                        child: Icon(Icons.arrow_back_ios),
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: getDefaultPadding(context) * 4),
+                          child: Icon(Icons.arrow_back_ios),
+                        ),
                       ),
                       Text(
                         "Kommentar",
@@ -95,6 +98,7 @@ class PostCommentPage extends BaseView {
                   ),
                   PostComment(
                     controller: PostCommentController(
+                        postPageController: controller.postPageController,
                         comment: controller.comment,
                         user: controller.user,
                         commentType: CommentType.comment),
@@ -103,6 +107,10 @@ class PostCommentPage extends BaseView {
                     children: controller.comment.children
                         .map((c) => PostComment(
                               controller: PostCommentController(
+                                answerToUserNameId:
+                                    controller.comment.userNameId,
+                                postPageController:
+                                    controller.postPageController,
                                 comment: c,
                                 commentType: CommentType.response,
                                 user: controller.user,

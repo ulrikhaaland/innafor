@@ -10,28 +10,33 @@ import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:innafor/widgets/buttons/fab.dart';
+import 'package:innafor/widgets/popup/bottom_sheet.dart';
 import 'package:innafor/widgets/popup/innafor_dialog.dart';
+import 'package:innafor/widgets/popup/main_dialog.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
-
-enum CommentType { comment, response, topLevel }
 
 class PostCommentController extends BaseController {
   bool showComments = false;
 
   final Comment comment;
 
+  final CommentType commentType;
+
   bool favorite;
 
   final User user;
-
-  final CommentType commentType;
 
   TextStyle bodyStyle;
 
   TextStyle iconTextStyle;
 
+  final GlobalKey<ScaffoldState> scaffoldKey;
+
   final PostPageController postPageController;
+
+  final FabController fabController;
 
   final String answerToUserNameId;
 
@@ -40,13 +45,14 @@ class PostCommentController extends BaseController {
   PostCommentController(
       {this.comment,
       this.user,
-      this.commentType,
       this.postPageController,
-      this.answerToUserNameId});
+      this.answerToUserNameId,
+      this.commentType,
+      this.scaffoldKey,
+      this.fabController});
 
   @override
   void initState() {
-    setTypeDifferences();
     super.initState();
   }
 
@@ -96,22 +102,27 @@ class PostComment extends BaseView {
   Widget build(BuildContext context) {
     if (!mounted) return Container();
 
-    if (controller.favorite == null)
-      controller.favorite =
-          controller.comment.favoriteIds?.contains(controller.user.id);
+    controller.setTypeDifferences();
+
+    controller.favorite =
+        controller.comment.favoriteIds?.contains(controller.user.id);
     Widget commentWidget = GestureDetector(
-      onTap: () => controller.commentType != CommentType.comment
-          ? Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PostCommentPage(
-                  controller: PostCommentPageController(
-                      comment: controller.comment,
-                      user: controller.user,
-                      postPageController: controller.postPageController),
+      onTap: () async {
+        if (controller.commentType != CommentType.comment) {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostCommentPage(
+                controller: PostCommentPageController(
+                  comment: controller.comment,
+                  user: controller.user,
+                  postPageController: controller.postPageController,
                 ),
-              ))
-          : null,
+              ),
+            ),
+          );
+        }
+      },
       child: Padding(
         padding: EdgeInsets.only(top: getDefaultPadding(context) * 2),
         child: Container(
@@ -282,7 +293,8 @@ class PostComment extends BaseView {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          controller.answerToUserNameId,
+                                          controller.answerToUserNameId ??
+                                              "N/A",
                                           style: ServiceProvider
                                               .instance
                                               .instanceStyleService
@@ -326,18 +338,28 @@ class PostComment extends BaseView {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () => controller.postPageController
-                                        .showReport(
-                                            ReportDialogInfo(
-                                                reportType: ReportType.comment,
-                                                reportedByUser: controller
-                                                    .postPageController.user,
-                                                reportedUser: User(
-                                                    id: controller.comment.uid,
-                                                    userName: controller
-                                                        .comment.userName),
-                                                id: controller.comment.id),
-                                            context),
+                                    onTap: () {
+                                      controller.postPageController
+                                          .bottomSheetController
+                                          .showBottomSheet(
+                                        content: MainDialog(
+                                          controller: MainDialogController(
+                                            dialogContentType:
+                                                DialogContentType.report,
+                                            divide: true,
+                                            reportDialogInfo: ReportDialogInfo(
+                                              reportedByUser: controller.user,
+                                              reportedUser: User(
+                                                  id: controller.comment.uid,
+                                                  userName: controller
+                                                      .comment.userName),
+                                              reportType: ReportType.comment,
+                                              id: controller.comment.id,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     child: Align(
                                       alignment: Alignment.centerRight,
                                       child: Row(
@@ -489,7 +511,7 @@ class PostComment extends BaseView {
                                           ),
                                         ),
                                         Text(
-                                          controller.comment.favoriteIds.length
+                                          controller.comment.favoriteIds?.length
                                                   .toString() ??
                                               "0",
                                           style: controller.iconTextStyle,

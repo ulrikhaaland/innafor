@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/objects/post.dart';
@@ -9,6 +7,7 @@ import 'package:innafor/objects/user.dart';
 import 'package:innafor/post/post_page.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:innafor/objects/comment.dart';
 
 import '../../helper.dart';
 import 'post_comment.dart';
@@ -32,6 +31,8 @@ class PostCommentContainer extends BaseView {
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return Container();
+
     return Container(
       height: controller.showComments
           ? ServiceProvider.instance.screenService
@@ -99,16 +100,16 @@ class PostCommentContainer extends BaseView {
               Container(),
             if (controller.showComments) ...[
               Column(
-                children: controller.postPageController.thePost.commentList
-                    .map((c) => PostComment(
-                          controller: PostCommentController(
-                            commentType: CommentType.topLevel,
-                            postPageController: controller.postPageController,
-                            user: controller.user,
-                            comment: c,
-                          ),
-                        ))
-                    .toList(),
+                children:
+                    controller.postPageController.thePost.commentList.map((c) {
+                  return PostComment(
+                    controller: PostCommentController(
+                        postPageController: controller.postPageController,
+                        user: controller.user,
+                        comment: c,
+                        commentType: CommentType.topLevel),
+                  );
+                }).toList(),
               ),
               Container(
                 height: ServiceProvider.instance.screenService

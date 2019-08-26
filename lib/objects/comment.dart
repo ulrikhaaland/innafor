@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'user.dart';
 
+enum CommentType { comment, response, topLevel }
+
 class Comment {
   final String uid;
   final String userImageUrl;
@@ -17,19 +19,20 @@ class Comment {
   final double userRating;
   DocumentReference docRef;
 
-  Comment(
-      {this.id,
-      this.isChildOfId,
-      this.text,
-      this.timestamp,
-      this.children,
-      this.uid,
-      this.userImageUrl,
-      this.userName,
-      this.userNameId,
-      this.favoriteIds,
-      this.userRating,
-      this.docRef});
+  Comment({
+    this.id,
+    this.isChildOfId,
+    this.text,
+    this.timestamp,
+    this.children,
+    this.uid,
+    this.userImageUrl,
+    this.userName,
+    this.userNameId,
+    this.favoriteIds,
+    this.userRating,
+    this.docRef,
+  });
 
   Map<String, dynamic> toJson() {
     return {

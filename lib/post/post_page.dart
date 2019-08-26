@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:innafor/widgets/buttons/fab.dart';
+import 'package:innafor/widgets/popup/bottom_sheet.dart';
 import 'package:innafor/widgets/popup/main_dialog.dart';
 import 'package:provider/provider.dart';
 import '../service/service_provider.dart';
@@ -38,7 +39,11 @@ class PostPageController extends BaseController {
 
   Post thePost;
 
+  List<Comment> theComment = [];
+
   bool loaded = false;
+
+  bool commentDive = false;
 
   User user;
 
@@ -46,11 +51,15 @@ class PostPageController extends BaseController {
 
   bool showComments = false;
 
+  int commentLevel = 0;
+
   double imgContainerWidth;
 
   FabController fabController;
 
   double deviceHeight;
+
+  InnaforBottomSheetController bottomSheetController;
 
   Widget x;
 
@@ -60,33 +69,22 @@ class PostPageController extends BaseController {
     fabController = FabController(
         showFab: false,
         onPressed: () {
-          shadow(false);
-          fabController.showFabAsMethod(false);
-          _scaffoldKey.currentState
-              .showBottomSheet((context) {
-                return PostNewComment(
-                  controller: PostNewCommentController(
-                    user: user,
-                    thePost: thePost,
-                  ),
-                );
-              })
-              .closed
-              .then((v) {
-                if (showShadowOverlay) {
-                  shadow(false);
-                }
-                Timer(Duration(milliseconds: 170),
-                    () => fabController.showFabAsMethod(true));
-              });
-        }
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => PostNewComment(
-        //     controller:
-        //         PostNewCommentController(userImage: user.profileImageWidget),
-        //   ),
-        // )),
-        );
+          bottomSheetController.showBottomSheet(
+            content: PostNewComment(
+              controller: PostNewCommentController(
+                user: user,
+                thePost: thePost,
+              ),
+            ),
+          );
+        });
+    bottomSheetController = InnaforBottomSheetController(
+      scaffoldKey: _scaffoldKey,
+      fabController: fabController,
+      context: context,
+      withShadowOverlay: true,
+      showComments: showComments,
+    );
     setScrollListener();
     postList = <Post>[];
     getPost();
@@ -96,13 +94,8 @@ class PostPageController extends BaseController {
   @override
   void dispose() {
     scrollController.dispose();
+    _scaffoldKey.currentState.dispose();
     super.dispose();
-  }
-
-  void shadow(bool pop) {
-    showShadowOverlay = !showShadowOverlay;
-    if (pop) Navigator.pop(context);
-    refresh();
   }
 
   void setScrollListener() {
@@ -122,32 +115,31 @@ class PostPageController extends BaseController {
     });
   }
 
-  void showReport(ReportDialogInfo reportInfo, BuildContext contextt,
-      {GlobalKey scaffoldKey}) {
-    fabController.showFab = false;
-    shadow(false);
-    _scaffoldKey.currentState
-        .showBottomSheet(
-          (
-            contextt,
-          ) {
-            return MainDialog(
-              controller: MainDialogController(
-                dialogContentType: DialogContentType.report,
-                divide: true,
-                reportDialogInfo: reportInfo,
-              ),
-            );
-          },
-        )
-        .closed
-        .then((v) {
-          if (showComments)
-            Timer(Duration(milliseconds: 170),
-                () => fabController.showFabAsMethod(true));
+  void showReportt() {
+    // fabController.showFab = false;
 
-          if (showShadowOverlay) shadow(false);
-        });
+    // _scaffoldKey.currentState
+    //     .showBottomSheet(
+    //       (
+    //         contextt,
+    //       ) {
+    //         return MainDialog(
+    //           controller: MainDialogController(
+    //             dialogContentType: DialogContentType.report,
+    //             divide: true,
+    //             reportDialogInfo: reportInfo,
+    //           ),
+    //         );
+    //       },
+    //     )
+    //     .closed
+    //     .then((v) {
+    //       if (showComments)
+    //         Timer(Duration(milliseconds: 170),
+    //             () => fabController.showFabAsMethod(true));
+
+    //       if (showShadowOverlay) shadow(false);
+    //     });
   }
 
   setProfileImage() {
@@ -295,17 +287,27 @@ class PostPage extends BaseView {
                             ? PostImageContainer(
                                 controller: PostImageContainerController(
                                     thePost: controller.thePost,
-                                    openReport: () => controller.showReport(
-                                        ReportDialogInfo(
-                                          reportedByUser: controller.user,
-                                          reportedUser: User(
-                                              id: controller.thePost.uid,
-                                              userName:
-                                                  controller.thePost.userName),
-                                          reportType: ReportType.post,
-                                          id: controller.thePost.id,
+                                    openReport: () {
+                                      controller.bottomSheetController
+                                          .showBottomSheet(
+                                        content: MainDialog(
+                                          controller: MainDialogController(
+                                            dialogContentType:
+                                                DialogContentType.report,
+                                            divide: true,
+                                            reportDialogInfo: ReportDialogInfo(
+                                              reportedByUser: controller.user,
+                                              reportedUser: User(
+                                                  id: controller.thePost.uid,
+                                                  userName: controller
+                                                      .thePost.userName),
+                                              reportType: ReportType.post,
+                                              id: controller.thePost.id,
+                                            ),
+                                          ),
                                         ),
-                                        context),
+                                      );
+                                    },
                                     hasLoaded: () {
                                       if (controller
                                               .thePost.commentList.length >
@@ -364,15 +366,9 @@ class PostPage extends BaseView {
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () => controller.shadow(true),
-              child: controller.showShadowOverlay
-                  ? Container(
-                      height: 3000,
-                      color: Color.fromRGBO(0, 0, 0, 0.5),
-                    )
-                  : Container(),
-            ),
+            InnaforBottomSheet(
+              controller: controller.bottomSheetController,
+            )
           ],
         ),
       ),

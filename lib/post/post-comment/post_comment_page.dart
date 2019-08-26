@@ -8,11 +8,10 @@ import 'package:innafor/post/post-comment/post_comment.dart';
 import 'package:innafor/post/post_page.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:innafor/widgets/buttons/fab.dart';
 
 class PostCommentPageController extends BaseController {
-  final Comment comment;
+  Comment comment;
 
   final User user;
 
@@ -24,19 +23,26 @@ class PostCommentPageController extends BaseController {
 
   bool shadowOverlay = false;
 
-  PostCommentPageController({this.comment, this.user, this.postPageController});
+  PostCommentPageController({
+    this.comment,
+    this.user,
+    this.postPageController,
+  });
 
   @override
   void initState() {
     fabController = FabController(
         showFab: true, iconData: FontAwesomeIcons.reply, onPressed: () => null);
+    postPageController.theComment.add(comment);
+
     super.initState();
   }
 
   @override
   void dispose() {
-    _scaffoldKey.currentState.dispose();
     super.dispose();
+
+    _scaffoldKey.currentState.dispose();
   }
 }
 
@@ -47,6 +53,16 @@ class PostCommentPage extends BaseView {
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return Container();
+
+    Widget commentWidget = PostComment(
+      controller: PostCommentController(
+        comment: controller.comment,
+        commentType: CommentType.comment,
+        user: controller.user,
+        postPageController: controller.postPageController,
+      ),
+    );
     return Scaffold(
       key: controller._scaffoldKey,
       floatingActionButton: Fab(
@@ -70,7 +86,9 @@ class PostCommentPage extends BaseView {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                         child: Padding(
                           padding: EdgeInsets.only(
                               left: getDefaultPadding(context) * 4),
@@ -96,28 +114,26 @@ class PostCommentPage extends BaseView {
                     height: ServiceProvider.instance.screenService
                         .getHeightByPercentage(context, 2.5),
                   ),
-                  PostComment(
-                    controller: PostCommentController(
-                        postPageController: controller.postPageController,
-                        comment: controller.comment,
-                        user: controller.user,
-                        commentType: CommentType.comment),
-                  ),
-                  Column(
-                    children: controller.comment.children
-                        .map((c) => PostComment(
-                              controller: PostCommentController(
-                                answerToUserNameId:
-                                    controller.comment.userNameId,
-                                postPageController:
-                                    controller.postPageController,
-                                comment: c,
-                                commentType: CommentType.response,
-                                user: controller.user,
+                  commentWidget,
+                  if (controller.comment.children.length > 0)
+                    Column(
+                      children: controller.comment.children.map((c) {
+                        return PostComment(
+                          controller: PostCommentController(
+                              answerToUserNameId: controller.comment.userNameId,
+                              postPageController: controller.postPageController,
+                              comment: c,
+                              user: controller.user,
+                              commentType: CommentType.response
+                              // onDive: () {
+                              //   controller.comment = c;
+                              //   controller.commentHierarchy.add(c);
+                              //   controller.refresh();
+                              // }
                               ),
-                            ))
-                        .toList(),
-                  )
+                        );
+                      }).toList(),
+                    )
                 ],
               ),
             ),

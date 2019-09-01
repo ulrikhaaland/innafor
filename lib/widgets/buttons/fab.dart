@@ -33,7 +33,7 @@ class Fab extends BaseView {
           controller.iconData ?? FontAwesomeIcons.solidComment,
           color: Colors.white,
           size: ServiceProvider
-              .instance.instanceStyleService.appStyle.iconSizeStandard,
+              .instance.instanceStyleService.appStyle.iconSizeSmall,
         ),
         onPressed: () => controller.onPressed(),
       );

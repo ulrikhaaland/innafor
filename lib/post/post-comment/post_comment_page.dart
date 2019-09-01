@@ -92,6 +92,7 @@ class PostCommentPage extends BaseView {
         commentType: CommentType.comment,
         user: controller.user,
         postPageController: controller.postPageController,
+        postCommentPageController: this.controller,
       ),
     );
     return Scaffold(
@@ -156,7 +157,8 @@ class PostCommentPage extends BaseView {
                               comment: c,
                               user: controller.user,
                               commentType: CommentType.response,
-                              parentId: controller.comment.id),
+                              parentId: controller.comment.id,
+                              postCommentPageController: this.controller),
                         );
                       }).toList(),
                     )

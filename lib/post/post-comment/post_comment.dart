@@ -37,7 +37,7 @@ class PostCommentController extends BaseController {
 
   final PostPageController postPageController;
 
-  final PostCommentPageController postCommentController;
+  final PostCommentPageController postCommentPageController;
 
   final FabController fabController;
 
@@ -58,7 +58,8 @@ class PostCommentController extends BaseController {
       this.commentType,
       this.scaffoldKey,
       this.fabController,
-      this.postCommentController});
+      this.postCommentPageController,
+      this.parentController});
 
   @override
   void initState() {
@@ -87,7 +88,7 @@ class PostCommentController extends BaseController {
         iconTextStyle =
             ServiceProvider.instance.instanceStyleService.appStyle.timestamp;
 
-        parentController = postCommentController;
+        parentController = postCommentPageController;
 
         break;
 
@@ -99,7 +100,7 @@ class PostCommentController extends BaseController {
         iconTextStyle =
             ServiceProvider.instance.instanceStyleService.appStyle.body1Grey;
 
-        parentController = postCommentController;
+        parentController = postCommentPageController;
 
         break;
 
@@ -118,6 +119,8 @@ class PostComment extends BaseView {
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
+
+    double padding = getDefaultPadding(context);
 
     controller.setTypeDifferences();
 
@@ -141,7 +144,7 @@ class PostComment extends BaseView {
         }
       },
       child: Padding(
-        padding: EdgeInsets.only(top: getDefaultPadding(context) * 2),
+        padding: EdgeInsets.only(top: padding * 2),
         child: Container(
           color: Colors.transparent,
           width: ServiceProvider.instance.screenService
@@ -160,7 +163,7 @@ class PostComment extends BaseView {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(
-                              top: getDefaultPadding(context),
+                              top: padding,
                             ),
                             child: CircleAvatar(
                               radius: ServiceProvider.instance.screenService
@@ -186,10 +189,10 @@ class PostComment extends BaseView {
                           //             items: <Widget>[
                           //               Padding(
                           //                 padding: EdgeInsets.only(
-                          //                     left: getDefaultPadding(context) *
+                          //                     left: padding *
                           //                         4,
                           //                     right:
-                          //                         getDefaultPadding(context) *
+                          //                         padding *
                           //                             4,
                           //                     bottom: 24),
                           //                 child: Text(
@@ -298,9 +301,9 @@ class PostComment extends BaseView {
                                 onTap: () => print("GO TO OP PROFILE"),
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                      top: getDefaultPadding(context),
-                                      left: getDefaultPadding(context),
-                                      right: getDefaultPadding(context)),
+                                      top: padding,
+                                      left: padding,
+                                      right: padding),
                                   child: Row(
                                     children: <Widget>[
                                       Text(
@@ -331,9 +334,7 @@ class PostComment extends BaseView {
                               Container(),
                             Padding(
                               padding: EdgeInsets.only(
-                                  top: getDefaultPadding(context),
-                                  left: getDefaultPadding(context),
-                                  right: getDefaultPadding(context)),
+                                  top: padding, left: padding, right: padding),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -367,7 +368,8 @@ class PostComment extends BaseView {
                                       } else {
                                         dialogType = DialogContentType.isOwner;
                                       }
-                                      controller.postPageController
+
+                                      controller.parentController
                                           .bottomSheetController
                                           .showBottomSheet(
                                         content: MainDialog(
@@ -445,8 +447,7 @@ class PostComment extends BaseView {
                               ),
                             ),
                             Padding(
-                              padding:
-                                  EdgeInsets.all(getDefaultPadding(context)),
+                              padding: EdgeInsets.all(padding),
                               child: Text(
                                 controller.comment.text ?? "",
                                 style: controller.bodyStyle,
@@ -454,8 +455,7 @@ class PostComment extends BaseView {
                             ),
                             Padding(
                               padding: EdgeInsets.only(
-                                  left: getDefaultPadding(context),
-                                  right: getDefaultPadding(context)),
+                                  left: padding, right: padding),
                               child: Row(
                                 children: <Widget>[
                                   InkWell(
@@ -478,7 +478,7 @@ class PostComment extends BaseView {
 
                                       controller.favorite =
                                           !controller.favorite;
-                                      controller.refresh();
+                                      controller.setState(() {});
                                     },
                                     child: Container(
                                       width: 50,
@@ -489,9 +489,8 @@ class PostComment extends BaseView {
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Padding(
-                                            padding: EdgeInsets.only(
-                                                right:
-                                                    getDefaultPadding(context)),
+                                            padding:
+                                                EdgeInsets.only(right: padding),
                                             child: Icon(
                                               controller.favorite
                                                   ? FontAwesomeIcons.solidHeart
@@ -559,7 +558,7 @@ class PostComment extends BaseView {
                                       ),
                                     ),
                                     Container(
-                                      width: getDefaultPadding(context) * 4,
+                                      width: padding * 4,
                                     ),
                                   ],
                                 ],
@@ -574,8 +573,7 @@ class PostComment extends BaseView {
               ),
               controller.commentType == CommentType.comment
                   ? Padding(
-                      padding:
-                          EdgeInsets.only(bottom: getDefaultPadding(context)),
+                      padding: EdgeInsets.only(bottom: padding),
                     )
                   : Divider(
                       color: ServiceProvider

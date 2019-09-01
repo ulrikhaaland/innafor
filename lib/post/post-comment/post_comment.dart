@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/helper.dart';
@@ -36,7 +37,7 @@ class PostCommentController extends BaseController {
 
   final PostPageController postPageController;
 
-  final PostCommentController postCommentController;
+  final PostCommentPageController postCommentController;
 
   final FabController fabController;
 
@@ -46,8 +47,11 @@ class PostCommentController extends BaseController {
 
   double iconSize;
 
+  final String parentId;
+
   PostCommentController(
       {this.comment,
+      this.parentId,
       this.user,
       this.postPageController,
       this.answerToUserNameId,
@@ -84,6 +88,7 @@ class PostCommentController extends BaseController {
             ServiceProvider.instance.instanceStyleService.appStyle.timestamp;
 
         parentController = postCommentController;
+
         break;
 
       case CommentType.comment:
@@ -355,13 +360,32 @@ class PostComment extends BaseView {
                                   ),
                                   InkWell(
                                     onTap: () {
+                                      DialogContentType dialogType;
+                                      if (controller.comment.uid !=
+                                          controller.user.id) {
+                                        dialogType = DialogContentType.report;
+                                      } else {
+                                        dialogType = DialogContentType.isOwner;
+                                      }
                                       controller.postPageController
                                           .bottomSheetController
                                           .showBottomSheet(
                                         content: MainDialog(
                                           controller: MainDialogController(
-                                            dialogContentType:
-                                                DialogContentType.report,
+                                            onDeleteComment: () async {
+                                              await Firestore.instance
+                                                  .document(
+                                                      "post/${controller.postPageController.thePost.id}/comments/${controller.comment.id}")
+                                                  .delete();
+
+                                              controller.postPageController
+                                                  .thePost.commentList
+                                                  .remove(controller.comment);
+
+                                              controller.postPageController
+                                                  .setState(() {});
+                                            },
+                                            dialogContentType: dialogType,
                                             divide: true,
                                             reportDialogInfo: ReportDialogInfo(
                                               reportedByUser: controller.user,
@@ -434,48 +458,6 @@ class PostComment extends BaseView {
                                   right: getDefaultPadding(context)),
                               child: Row(
                                 children: <Widget>[
-                                  if (controller.commentType !=
-                                          CommentType.comment &&
-                                      controller.comment.children.length >
-                                          0) ...[
-                                    InkWell(
-                                      onTap: () => print("comments pressed"),
-                                      child: Container(
-                                        width: 50,
-                                        child: Row(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  right: getDefaultPadding(
-                                                      context)),
-                                              child: Icon(
-                                                FontAwesomeIcons.comment,
-                                                color: ServiceProvider
-                                                    .instance
-                                                    .instanceStyleService
-                                                    .appStyle
-                                                    .textGrey,
-                                                size: controller.iconSize,
-                                              ),
-                                            ),
-                                            Text(
-                                              controller
-                                                  .comment.children?.length
-                                                  .toString(),
-                                              style: ServiceProvider
-                                                  .instance
-                                                  .instanceStyleService
-                                                  .appStyle
-                                                  .timestamp,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: getDefaultPadding(context) * 4,
-                                    ),
-                                  ],
                                   InkWell(
                                     onTap: () {
                                       if (controller.favorite) {
@@ -502,13 +484,7 @@ class PostComment extends BaseView {
                                       width: 50,
                                       child: Row(
                                         mainAxisAlignment:
-                                            controller.comment.children.length >
-                                                    0
-                                                ? controller.commentType ==
-                                                        CommentType.comment
-                                                    ? MainAxisAlignment.start
-                                                    : MainAxisAlignment.center
-                                                : MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
@@ -545,6 +521,47 @@ class PostComment extends BaseView {
                                       ),
                                     ),
                                   ),
+                                  if (controller.commentType !=
+                                          CommentType.comment &&
+                                      controller.comment.children.length >
+                                          0) ...[
+                                    InkWell(
+                                      child: Container(
+                                        width: 50,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: getDefaultPadding(
+                                                      context)),
+                                              child: Icon(
+                                                FontAwesomeIcons.comment,
+                                                color: ServiceProvider
+                                                    .instance
+                                                    .instanceStyleService
+                                                    .appStyle
+                                                    .textGrey,
+                                                size: controller.iconSize,
+                                              ),
+                                            ),
+                                            Text(
+                                              controller
+                                                  .comment.children?.length
+                                                  .toString(),
+                                              style: ServiceProvider
+                                                  .instance
+                                                  .instanceStyleService
+                                                  .appStyle
+                                                  .timestamp,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: getDefaultPadding(context) * 4,
+                                    ),
+                                  ],
                                 ],
                               ),
                             )

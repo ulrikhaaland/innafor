@@ -172,6 +172,9 @@ class PostPageController extends BaseController {
             .then((favoriteColl) {
           favoriteColl.documents.forEach(
               (favorite) => comment.favoriteIds.add(favorite.documentID));
+          commentList.forEach((c) =>
+              c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
+          commentList.sort((a, b) => b.sort.compareTo(a.sort));
         });
       });
       List<Comment> removeAble = <Comment>[];
@@ -185,9 +188,6 @@ class PostPageController extends BaseController {
           }
         });
       });
-      commentList.forEach((c) =>
-          c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
-      commentList.sort((a, b) => b.sort.compareTo(a.sort));
 
       removeAble.forEach((rc) {
         commentList.remove(rc);
@@ -279,12 +279,18 @@ class PostPage extends BaseView {
                                 controller: PostImageContainerController(
                                     thePost: controller.thePost,
                                     openReport: () {
+                                      DialogContentType dialogType;
+                                      if (controller.thePost.uid !=
+                                          controller.user.id) {
+                                        dialogType = DialogContentType.report;
+                                      } else {
+                                        dialogType = DialogContentType.isOwner;
+                                      }
                                       controller.bottomSheetController
                                           .showBottomSheet(
                                         content: MainDialog(
                                           controller: MainDialogController(
-                                            dialogContentType:
-                                                DialogContentType.report,
+                                            dialogContentType: dialogType,
                                             divide: true,
                                             reportDialogInfo: ReportDialogInfo(
                                               reportedByUser: controller.user,
@@ -350,6 +356,9 @@ class PostPage extends BaseView {
                     ),
                   ),
                   if (controller.thePost != null) ...[
+                    Container(
+                      height: getDefaultPadding(context) * 4,
+                    ),
                     PostCommentContainer(
                       controller: PostCommentContainerController(
                         postPageController: controller,

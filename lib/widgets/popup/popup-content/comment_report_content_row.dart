@@ -5,11 +5,11 @@ import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
 import 'package:innafor/service/service_provider.dart';
 
-class CommentReportContentRow extends StatelessWidget {
+class DialogContentRow extends StatelessWidget {
   final Icon icon;
   final String text;
   final VoidCallback onPressed;
-  const CommentReportContentRow({Key key, this.icon, this.text, this.onPressed})
+  const DialogContentRow({Key key, this.icon, this.text, this.onPressed})
       : super(key: key);
 
   @override

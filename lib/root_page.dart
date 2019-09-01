@@ -64,7 +64,8 @@ class RootPageController extends BaseController {
           imageUrl: null,
           appVersion: 1,
           notifications: 0,
-          blockedUserId: <String>[],
+          blockedUserIds: <String>[],
+          bookmarkIds: <String>[],
           docRef: docSnap.reference,
         );
 
@@ -74,13 +75,15 @@ class RootPageController extends BaseController {
       } else {
         _user = User(
           docRef: docSnap.reference,
+          blockedUserIds: [],
+          bookmarkIds: [],
         );
         _user.fromJson(docSnap.data);
       }
       // Get list of blocked users id
-      docSnap.reference.collection("blocked").getDocuments().then((qSnap) =>
-          qSnap.documents
-              .forEach((doc) => _user.blockedUserId.add(doc.documentID)));
+      // docSnap.reference.collection("blocked").getDocuments().then((qSnap) =>
+      //     qSnap.documents
+      //         .forEach((doc) => _user.blockedUserId.add(doc.documentID)));
 
       _updateFcmToken();
     }

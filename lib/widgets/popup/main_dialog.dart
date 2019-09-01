@@ -15,7 +15,7 @@ import 'package:innafor/widgets/buttons/primary_button.dart';
 import 'package:innafor/widgets/popup/popup-content/comment_report_content_row.dart';
 import 'package:provider/provider.dart';
 
-enum DialogContentType { report, undefined }
+enum DialogContentType { report, undefined, isOwner }
 
 class MainDialogController extends BaseController {
   final ReportDialogInfo reportDialogInfo;
@@ -26,10 +26,12 @@ class MainDialogController extends BaseController {
   List<Widget> body;
   final bool divide;
   final DialogContentType dialogContentType;
+  final VoidCallback onDeleteComment;
 
   MainDialogController(
       {this.reportDialogInfo,
       this.bar,
+      this.onDeleteComment,
       this.body,
       this.divide,
       this.barEnd,
@@ -45,7 +47,18 @@ class MainDialogController extends BaseController {
     switch (dialogContentType) {
       case DialogContentType.report:
         return [
-          CommentReportContentRow(
+          DialogContentRow(
+            onPressed: () {
+              if (reportDialogInfo.reportedUser.blocked) {
+                reportDialogInfo.reportedByUser.blockedUserIds
+                    .remove(reportDialogInfo.reportedUser.id);
+              } else {
+                reportDialogInfo.reportedByUser.blockedUserIds
+                    .add(reportDialogInfo.reportedUser.id);
+              }
+              reportDialogInfo.reportedByUser.update();
+              Navigator.pop(context);
+            },
             text: reportDialogInfo.reportedUser.blocked
                 ? "Fjern blokkering av ${reportDialogInfo.reportedUser.userName ?? "N/A"} "
                 : "Blokker ${reportDialogInfo.reportedUser.userName ?? "N/A"}",
@@ -57,7 +70,7 @@ class MainDialogController extends BaseController {
                   .instance.instanceStyleService.appStyle.iconSizeStandard,
             ),
           ),
-          CommentReportContentRow(
+          DialogContentRow(
             onPressed: () {
               reportDialogInfo.pushReport();
               Navigator.pop(context);
@@ -75,6 +88,27 @@ class MainDialogController extends BaseController {
           )
         ];
 
+        break;
+
+      case DialogContentType.isOwner:
+        {
+          return [
+            DialogContentRow(
+              onPressed: () {
+                onDeleteComment();
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                FontAwesomeIcons.trash,
+                size: ServiceProvider
+                    .instance.instanceStyleService.appStyle.iconSizeStandard,
+                color: ServiceProvider
+                    .instance.instanceStyleService.appStyle.textGrey,
+              ),
+              text: "Slett kommentar",
+            ),
+          ];
+        }
         break;
 
       case DialogContentType.undefined:
@@ -98,7 +132,7 @@ class MainDialog extends BaseView {
   @override
   Widget build(BuildContext context) {
     controller.reportDialogInfo.reportedUser.blocked = controller
-        .reportDialogInfo.reportedByUser.blockedUserId
+        .reportDialogInfo.reportedByUser.blockedUserIds
         .contains(controller.reportDialogInfo.reportedUser.id);
 
     if (controller.body == null) {
@@ -155,62 +189,27 @@ class MainDialog extends BaseView {
                                       ),
                                     ),
                                   ),
-                            Column(
-                              children: <Widget>[
-                                controller.reportDialogInfo.reportType ==
-                                        ReportType.comment
-                                    ? Container(
-                                        padding: EdgeInsets.only(right: 18),
-                                        height: ServiceProvider
-                                            .instance.screenService
-                                            .getHeightByPercentage(context, 5),
-                                        width: ServiceProvider
-                                            .instance.screenService
-                                            .getWidthByPercentage(context, 75),
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: controller.barEnd != null
-                                              ? controller.barEnd
-                                              : Icon(
-                                                  FontAwesomeIcons.reply,
-                                                  color: ServiceProvider
-                                                      .instance
-                                                      .instanceStyleService
-                                                      .appStyle
-                                                      .leBleu,
-                                                  size: ServiceProvider
-                                                      .instance
-                                                      .instanceStyleService
-                                                      .appStyle
-                                                      .iconSizeStandard,
-                                                ),
-                                        ),
-                                      )
-                                    : Container(
-                                        padding: EdgeInsets.only(right: 18),
-                                        height: ServiceProvider
-                                            .instance.screenService
-                                            .getHeightByPercentage(context, 5),
-                                        width: ServiceProvider
-                                            .instance.screenService
-                                            .getWidthByPercentage(context, 75),
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: controller.barEnd != null
-                                              ? controller.barEnd
-                                              : Icon(
-                                                  FontAwesomeIcons.reply,
-                                                  color: Colors.transparent,
-                                                  size: ServiceProvider
-                                                      .instance
-                                                      .instanceStyleService
-                                                      .appStyle
-                                                      .iconSizeStandard,
-                                                ),
-                                        ),
-                                      )
-                              ],
-                            ),
+                            Container(
+                              padding: EdgeInsets.only(right: 18),
+                              height: ServiceProvider.instance.screenService
+                                  .getHeightByPercentage(context, 5),
+                              width: ServiceProvider.instance.screenService
+                                  .getWidthByPercentage(context, 75),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: controller.barEnd != null
+                                    ? controller.barEnd
+                                    : Icon(
+                                        FontAwesomeIcons.reply,
+                                        color: Colors.transparent,
+                                        size: ServiceProvider
+                                            .instance
+                                            .instanceStyleService
+                                            .appStyle
+                                            .iconSizeStandard,
+                                      ),
+                              ),
+                            )
                           ],
                         ),
                         Padding(
@@ -237,63 +236,3 @@ class MainDialog extends BaseView {
     );
   }
 }
-
-// List<Widget> commentReportWidgets() {
-//   return [
-
-//     Container(
-//       height: 220,
-//       width: ServiceProvider.instance.screenService.getWidth(context),
-//       color: ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
-//       child: Padding(
-//         padding: EdgeInsets.all(getDefaultPadding(context) * 4),
-//         child: Column(
-//           children: <Widget>[
-
-//             Container(
-//               height: getDefaultPadding(context) * 4,
-//             ),
-//             InkWell(
-//               onTap: () {
-//                 controller.reportDialogInfo.pushReport();
-//                 Navigator.pop(context);
-//               },
-//               child: Container(
-//                 width: ServiceProvider.instance.screenService
-//                     .getWidthByPercentage(context, 100),
-//                 color: Colors.transparent,
-//                 child: Row(
-//                   children: <Widget>[
-//                     Icon(
-//                       FontAwesomeIcons.solidFlag,
-//                       color: ServiceProvider
-//                           .instance.instanceStyleService.appStyle.textGrey,
-//                       size: ServiceProvider.instance.instanceStyleService
-//                           .appStyle.iconSizeStandard,
-//                     ),
-//                     Container(
-//                       width: getDefaultPadding(context) * 4,
-//                     ),
-//                     Text(
-//                       controller.reportDialogInfo.typeString == "post"
-//                           ? "Rapporter innlegg"
-//                           : "Rapporter kommentar",
-//                       style: ServiceProvider
-//                           .instance.instanceStyleService.appStyle.body2,
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             PrimaryButton(
-//               controller: PrimaryButtonController(
-//                   text: "Avbryt",
-//                   onPressed: () => controller.onDone(),
-//                   bottomPadding: 0),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   ];
-// }

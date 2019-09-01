@@ -12,7 +12,7 @@ class Comment {
   final String userName;
   final String userNameId;
   final String id;
-  final String isChildOfId;
+  String isChildOfId;
   final String text;
   final DateTime timestamp;
   final List<Comment> children;

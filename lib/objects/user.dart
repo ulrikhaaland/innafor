@@ -14,9 +14,10 @@ class User {
   int notifications;
   double rating;
   DateTime birthDate;
-  List<String> blockedUserId;
+  List<String> blockedUserIds;
   bool blocked;
   Widget profileImageWidget;
+  List<String> bookmarkIds;
   final DocumentReference docRef;
 
   final Firestore _firestoreInstance = Firestore.instance;
@@ -29,7 +30,8 @@ class User {
       this.imageUrl,
       this.appVersion,
       this.notifications,
-      this.blockedUserId,
+      this.blockedUserIds,
+      this.bookmarkIds,
       this.docRef,
       this.rating,
       this.userNameId});
@@ -44,8 +46,8 @@ class User {
     this.imageUrl = data["image_url"];
     this.appVersion = data["app_version"];
     this.notifications = data["notifications"];
-    this.blockedUserId = [];
-    // data["blocker_user_id"]?.cast<String>() ?? <String>[];
+    this.bookmarkIds.addAll(data["bookmark_ids"]?.cast<String>() ?? []);
+    this.blockedUserIds.addAll(data["blocker_user_ids"]?.cast<String>() ?? []);
     this.rating = data["rating"];
     this.userNameId = data["user_name_id"];
   }
@@ -60,7 +62,7 @@ class User {
       'image_url': this.imageUrl,
       'app_version': this.appVersion,
       'notifications': this.notifications,
-      'blocker_user_id': this.blockedUserId,
+      'blocker_user_ids': this.blockedUserIds,
       'rating': this.rating,
       'user_name_id': this.userNameId,
     };

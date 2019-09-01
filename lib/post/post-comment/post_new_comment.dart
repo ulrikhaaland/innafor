@@ -129,14 +129,16 @@ class PostNewComment extends BaseView {
                                     favoriteIds: [],
                                     children: [],
                                   );
-                                  comment.addComment(
-                                      postId: controller.thePost.id);
                                   if (controller.newCommentType ==
                                       NewCommentType.post) {
                                     controller.thePost.commentList.add(comment);
                                   } else {
                                     controller.comment.children.add(comment);
+                                    comment.isChildOfId = controller.comment.id;
                                   }
+                                  comment.addComment(
+                                      postId: controller.thePost.id);
+
                                   Navigator.pop(context);
                                 }
                               },

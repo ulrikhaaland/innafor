@@ -38,6 +38,7 @@ class PostCommentPageController extends BaseController {
 
   @override
   void initState() {
+    // Order comments by likes and replies
     if (comment.children.length > 1) {
       comment.children.forEach((c) =>
           c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
@@ -63,6 +64,7 @@ class PostCommentPageController extends BaseController {
       fabController: fabController,
       context: context,
       withShadowOverlay: true,
+      showComments: true,
     );
 
     super.initState();
@@ -70,9 +72,8 @@ class PostCommentPageController extends BaseController {
 
   @override
   void dispose() {
-    super.dispose();
-
     scaffoldKey.currentState.dispose();
+    super.dispose();
   }
 }
 
@@ -154,7 +155,8 @@ class PostCommentPage extends BaseView {
                               postPageController: controller.postPageController,
                               comment: c,
                               user: controller.user,
-                              commentType: CommentType.response),
+                              commentType: CommentType.response,
+                              parentId: controller.comment.id),
                         );
                       }).toList(),
                     )

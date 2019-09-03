@@ -13,14 +13,15 @@ class Post {
   final String userNameId;
   final DocumentReference docRef;
 
-  Post(
-      {this.id,
-      this.commentList,
-      this.imgUrlList,
-      this.message,
-      this.title,
-      this.uid,
-      this.userName,
-      this.docRef,
-      this.userNameId});
+  Post({
+    this.id,
+    this.commentList,
+    this.imgUrlList,
+    this.message,
+    this.title,
+    this.uid,
+    this.userName,
+    this.docRef,
+    this.userNameId,
+  });
 }

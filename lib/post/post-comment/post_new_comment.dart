@@ -24,12 +24,18 @@ class PostNewCommentController extends BaseController {
 
   final NewCommentType newCommentType;
 
+  dynamic parentController;
+
   final FocusNode textFieldFocusNode = FocusNode();
 
   final TextEditingController textEditingController = TextEditingController();
 
   PostNewCommentController(
-      {this.user, this.thePost, this.newCommentType, this.comment});
+      {this.user,
+      this.thePost,
+      this.newCommentType,
+      this.comment,
+      this.parentController});
 
   @override
   void initState() {
@@ -127,18 +133,18 @@ class PostNewComment extends BaseView {
                                     userRating: controller.user.rating,
                                     userNameId: controller.user.userNameId,
                                     favoriteIds: [],
-                                    children: [],
+                                    ancestorIds: [],
                                   );
                                   if (controller.newCommentType ==
                                       NewCommentType.post) {
                                     controller.thePost.commentList.add(comment);
                                   } else {
-                                    controller.comment.children.add(comment);
+                                    controller.thePost.commentList.add(comment);
                                     comment.isChildOfId = controller.comment.id;
                                   }
                                   comment.addComment(
                                       postId: controller.thePost.id);
-
+                                  controller.parentController.setState(() {});
                                   Navigator.pop(context);
                                 }
                               },

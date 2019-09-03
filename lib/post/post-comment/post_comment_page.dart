@@ -27,23 +27,20 @@ class PostCommentPageController extends BaseController {
 
   InnaforBottomSheetController bottomSheetController;
 
-  final String documentPath;
-
   PostCommentPageController({
     this.comment,
     this.user,
     this.postPageController,
-    this.documentPath,
   });
 
   @override
   void initState() {
     // Order comments by likes and replies
-    if (comment.children.length > 1) {
-      comment.children.forEach((c) =>
-          c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
-      comment.children.sort((a, b) => b.sort.compareTo(a.sort));
-    }
+    // if (comment.children.length > 1) {
+    //   comment.children.forEach((c) =>
+    //       c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
+    //   comment.children.sort((a, b) => b.sort.compareTo(a.sort));
+    // }
     fabController = FabController(
         showFab: true,
         iconData: FontAwesomeIcons.reply,
@@ -55,6 +52,7 @@ class PostCommentPageController extends BaseController {
                 thePost: postPageController.thePost,
                 newCommentType: NewCommentType.comment,
                 comment: comment,
+                parentController: this,
               ),
             ),
           );
@@ -118,8 +116,11 @@ class PostCommentPage extends BaseView {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
+                        onTap: () async {
+                          if (mounted) {
+                            await controller.postPageController.allowDispose();
+                            Navigator.pop(context);
+                          }
                         },
                         child: Padding(
                           padding: EdgeInsets.only(
@@ -147,33 +148,28 @@ class PostCommentPage extends BaseView {
                         .getHeightByPercentage(context, 2.5),
                   ),
                   commentWidget,
-                  if (controller.comment.children.length > 0)
-                    Column(
-                      children: controller.comment.children.map((c) {
-                        return PostComment(
-                          controller: PostCommentController(
-                              answerToUserNameId: controller.comment.userNameId,
-                              postPageController: controller.postPageController,
-                              comment: c,
-                              user: controller.user,
-                              commentType: CommentType.response,
-                              parentId: controller.comment.id,
-                              postCommentPageController: this.controller),
-                        );
-                      }).toList(),
-                    )
+                  Column(
+                    children: controller.postPageController.thePost.commentList
+                        .where((c) => c.isChildOfId == controller.comment.id)
+                        .map((c) {
+                      return PostComment(
+                        controller: PostCommentController(
+                            answerToUserNameId: controller.comment.userNameId,
+                            postPageController: controller.postPageController,
+                            comment: c,
+                            user: controller.user,
+                            commentType: CommentType.response,
+                            parentId: controller.comment.id,
+                            postCommentPageController: this.controller),
+                      );
+                    }).toList(),
+                  )
                 ],
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () => null,
-            child: controller.shadowOverlay
-                ? Container(
-                    height: 3000,
-                    color: Color.fromRGBO(0, 0, 0, 0.5),
-                  )
-                : Container(),
+          InnaforBottomSheet(
+            controller: controller.bottomSheetController,
           ),
         ],
       ),

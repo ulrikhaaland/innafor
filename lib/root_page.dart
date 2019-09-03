@@ -161,21 +161,9 @@ class RootPage extends BaseView {
         ),
       );
     } else {
-      PostPageController postPageController = PostPageController(
-        auth: controller.auth,
-      );
-      return MultiProvider(
-        providers: [
-          Provider<User>.value(
-            value: controller._user,
-          ),
-          Provider<PostPageController>.value(
-            value: postPageController,
-          ),
-        ],
-        child: PostPage(
-          controller: postPageController,
-        ),
+      return PostPage(
+        controller:
+            PostPageController(auth: controller.auth, user: controller._user),
       );
     }
   }

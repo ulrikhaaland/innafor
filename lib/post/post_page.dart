@@ -41,15 +41,13 @@ class PostPageController extends BaseController {
 
   bool loaded = false;
 
-  bool commentDive = false;
+  final User user;
 
-  User user;
+  Future<bool> canDispose = Future.value(true);
 
   bool showShadowOverlay = false;
 
   bool showComments = false;
-
-  int commentLevel = 0;
 
   double imgContainerWidth;
 
@@ -59,9 +57,11 @@ class PostPageController extends BaseController {
 
   InnaforBottomSheetController bottomSheetController;
 
+  PostCommentContainerController commentContainerController;
+
   Widget x;
 
-  PostPageController({this.auth});
+  PostPageController({this.auth, this.user});
   @override
   void initState() {
     fabController = FabController(
@@ -74,6 +74,7 @@ class PostPageController extends BaseController {
                 user: user,
                 thePost: thePost,
                 newCommentType: NewCommentType.post,
+                parentController: this,
               ),
             ),
           );
@@ -85,6 +86,16 @@ class PostPageController extends BaseController {
       withShadowOverlay: true,
       showComments: showComments,
     );
+
+    commentContainerController = PostCommentContainerController(
+      postPageController: this,
+      show: (isShowing) {
+        showComments = isShowing;
+        bottomSheetController.showComments = isShowing;
+      },
+      user: user,
+    );
+
     setScrollListener();
     postList = <Post>[];
     getPost();
@@ -117,6 +128,15 @@ class PostPageController extends BaseController {
     });
   }
 
+  Future<bool> allowDispose() {
+    canDispose = Future.value(false);
+    Timer(
+      Duration(milliseconds: 5),
+      () => canDispose = Future.value(true),
+    );
+    return canDispose;
+  }
+
   setProfileImage() {
     user.profileImageWidget = x;
   }
@@ -141,12 +161,12 @@ class PostPageController extends BaseController {
       // Fetch comments for each post
       postList.add(post);
       post.commentList =
-          await getComments(path: post.docRef.path + "/comments");
+          await getComments(path: post.docRef.path + "/comments", post: post);
     });
     thePost = postList[0];
   }
 
-  Future<List<Comment>> getComments({String path}) async {
+  Future<List<Comment>> getComments({String path, Post post}) async {
     List<Comment> commentList = <Comment>[];
     QuerySnapshot qSnap =
         await Firestore.instance.collection(path).getDocuments();
@@ -157,8 +177,8 @@ class PostPageController extends BaseController {
             text: doc.data["text"],
             timestamp: doc.data["timestamp"].toDate(),
             favoriteIds: <String>[],
-            children: <Comment>[],
-            isChildOfId: doc.data["is_child_of_id"] ?? "0",
+            ancestorIds: <String>[],
+            isChildOfId: doc.data["is_child_of_id"],
             userImageUrl: doc.data["user_image_url"],
             userName: doc.data["user_name"],
             uid: doc.data["uid"],
@@ -172,26 +192,14 @@ class PostPageController extends BaseController {
             .then((favoriteColl) {
           favoriteColl.documents.forEach(
               (favorite) => comment.favoriteIds.add(favorite.documentID));
-          commentList.forEach((c) =>
-              c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
-          commentList.sort((a, b) => b.sort.compareTo(a.sort));
-        });
-      });
-      List<Comment> removeAble = <Comment>[];
-
-      commentList.forEach((ci) {
-        commentList.forEach((cj) {
-          if (ci.isChildOfId == cj.id) {
-            cj.children.add(ci);
-
-            removeAble.add(ci);
-          }
         });
       });
 
-      removeAble.forEach((rc) {
-        commentList.remove(rc);
-      });
+      commentList.forEach((c) => c.sort =
+          (commentList.where((child) => child.isChildOfId == c.id).length * 1) +
+              (c.favoriteIds.length * 0.6));
+      commentList.sort((a, b) => b.sort.compareTo(a.sort));
+
       setState(() {});
       return commentList;
     } else {
@@ -214,8 +222,6 @@ class PostPage extends BaseView {
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
-
-    if (controller.user == null) controller.user = Provider.of<User>(context);
 
     if (controller.deviceHeight == null)
       controller.deviceHeight =
@@ -360,15 +366,7 @@ class PostPage extends BaseView {
                       height: getDefaultPadding(context) * 4,
                     ),
                     PostCommentContainer(
-                      controller: PostCommentContainerController(
-                        postPageController: controller,
-                        show: (isShowing) {
-                          controller.showComments = isShowing;
-                          controller.bottomSheetController.showComments =
-                              isShowing;
-                        },
-                        user: controller.user,
-                      ),
+                      controller: controller.commentContainerController,
                     ),
                   ],
                 ],
@@ -376,7 +374,7 @@ class PostPage extends BaseView {
             ),
             InnaforBottomSheet(
               controller: controller.bottomSheetController,
-            )
+            ),
           ],
         ),
       ),

@@ -11,11 +11,11 @@ class Comment {
   final String userImageUrl;
   final String userName;
   final String userNameId;
-  final String id;
+  String id;
   String isChildOfId;
   final String text;
   final DateTime timestamp;
-  final List<Comment> children;
+  final List<String> ancestorIds;
   double sort;
   final List<String> favoriteIds;
   final double userRating;
@@ -26,7 +26,7 @@ class Comment {
     this.isChildOfId,
     this.text,
     this.timestamp,
-    this.children,
+    this.ancestorIds,
     this.uid,
     this.userImageUrl,
     this.userName,
@@ -57,6 +57,9 @@ class Comment {
     Firestore.instance
         .collection("post/$postId/comments")
         .add(this.toJson())
-        .then((docRef) => this.docRef = docRef);
+        .then((docRef) {
+      this.docRef = docRef;
+      this.id = docRef.documentID;
+    });
   }
 }

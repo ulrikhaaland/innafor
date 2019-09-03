@@ -96,7 +96,6 @@ class MainDialogController extends BaseController {
             DialogContentRow(
               onPressed: () {
                 onDeleteComment();
-                Navigator.pop(context);
               },
               icon: Icon(
                 FontAwesomeIcons.trash,

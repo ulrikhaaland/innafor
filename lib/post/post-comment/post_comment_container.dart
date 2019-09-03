@@ -34,6 +34,11 @@ class PostCommentContainer extends BaseView {
     if (!mounted && controller.postPageController.thePost.commentList != null)
       return Container();
 
+    List<Comment> commentList = controller
+        .postPageController.thePost.commentList
+        .where((c) => c.isChildOfId == null)
+        .toList();
+
     return Container(
       height: controller.showComments
           ? ServiceProvider.instance.screenService
@@ -85,8 +90,8 @@ class PostCommentContainer extends BaseView {
                       ),
                       Text(
                         controller.showComments
-                            ? "Skjul ${controller.postPageController.thePost.commentList.length} kommentarer"
-                            : "Vis ${controller.postPageController.thePost.commentList.length} kommentarer",
+                            ? "Skjul ${controller.postPageController.thePost.commentList.where((c) => c.isChildOfId == null).length} kommentarer"
+                            : "Vis ${controller.postPageController.thePost.commentList.where((c) => c.isChildOfId == null).length} kommentarer",
                         style: ServiceProvider
                             .instance.instanceStyleService.appStyle.body1,
                       ),
@@ -95,10 +100,11 @@ class PostCommentContainer extends BaseView {
                 ),
               ),
             ),
-            if (controller.showComments) ...[
+            if (controller.showComments &&
+                controller
+                    .postPageController.thePost.commentList.isNotEmpty) ...[
               Column(
-                children:
-                    controller.postPageController.thePost.commentList.map((c) {
+                children: commentList.map((c) {
                   return PostComment(
                     controller: PostCommentController(
                         postPageController: controller.postPageController,

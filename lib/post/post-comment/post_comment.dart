@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:innafor/base_controller.dart';
 import 'package:innafor/base_view.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:innafor/widgets/buttons/fab.dart';
+import 'package:innafor/widgets/circular_progress_indicator.dart';
 import 'package:innafor/widgets/popup/bottom_sheet.dart';
 import 'package:innafor/widgets/popup/innafor_dialog.dart';
 import 'package:innafor/widgets/popup/main_dialog.dart';
@@ -43,6 +46,8 @@ class PostCommentController extends BaseController {
 
   final String answerToUserNameId;
 
+  int childCount;
+
   var parentController;
 
   double iconSize;
@@ -63,7 +68,35 @@ class PostCommentController extends BaseController {
 
   @override
   void initState() {
+    getChildCount();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (mounted) {
+      super.dispose();
+      scaffoldKey?.currentState?.dispose();
+    }
+  }
+
+  void getChildCount() {
+    if (comment.id != null) {
+      childCount = postPageController.thePost.commentList
+          .where((c) => checkId(c))
+          .length;
+      setState(() {});
+    } else {
+      Timer(Duration(milliseconds: 100), () => getChildCount());
+    }
+  }
+
+  bool checkId(Comment c) {
+    if (c.id == comment.id && c != comment) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void setTypeDifferences() {
@@ -109,6 +142,40 @@ class PostCommentController extends BaseController {
             ServiceProvider.instance.instanceStyleService.appStyle.body1Black;
     }
   }
+
+  void deleteComment() {
+    delete(String commentId) {
+      Firestore.instance
+          .document("post/${postPageController.thePost.id}/comments/$commentId")
+          .delete();
+    }
+
+    delete(comment.id);
+
+    postPageController.thePost.commentList.forEach((c) {
+      if (c.isChildOfId == comment.id) {
+        delete(c.id);
+      }
+    });
+
+    postPageController.thePost.commentList
+        .removeWhere((c) => c.isChildOfId == comment.id);
+
+    postPageController.thePost.commentList.remove(this.comment);
+
+    if (commentType == CommentType.topLevel) {
+      postPageController.commentContainerController.setState(() {});
+    } else {
+      parentController.setState(() {});
+    }
+
+    if (commentType == CommentType.comment) {
+      postPageController.fabController.showFabAsMethod(true);
+      Navigator.pop(context);
+    }
+    Navigator.pop(context);
+    dispose();
+  }
 }
 
 class PostComment extends BaseView {
@@ -119,6 +186,10 @@ class PostComment extends BaseView {
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
+
+    if (controller.childCount == null) {
+      return CPI(false);
+    }
 
     double padding = getDefaultPadding(context);
 
@@ -134,10 +205,10 @@ class PostComment extends BaseView {
             MaterialPageRoute(
               builder: (context) => PostCommentPage(
                 controller: PostCommentPageController(
-                    comment: controller.comment,
-                    user: controller.user,
-                    postPageController: controller.postPageController,
-                    documentPath: controller.comment.id),
+                  comment: controller.comment,
+                  user: controller.user,
+                  postPageController: controller.postPageController,
+                ),
               ),
             ),
           );
@@ -374,19 +445,8 @@ class PostComment extends BaseView {
                                           .showBottomSheet(
                                         content: MainDialog(
                                           controller: MainDialogController(
-                                            onDeleteComment: () async {
-                                              await Firestore.instance
-                                                  .document(
-                                                      "post/${controller.postPageController.thePost.id}/comments/${controller.comment.id}")
-                                                  .delete();
-
-                                              controller.postPageController
-                                                  .thePost.commentList
-                                                  .remove(controller.comment);
-
-                                              controller.postPageController
-                                                  .setState(() {});
-                                            },
+                                            onDeleteComment: () =>
+                                                controller.deleteComment(),
                                             dialogContentType: dialogType,
                                             divide: true,
                                             reportDialogInfo: ReportDialogInfo(
@@ -522,8 +582,7 @@ class PostComment extends BaseView {
                                   ),
                                   if (controller.commentType !=
                                           CommentType.comment &&
-                                      controller.comment.children.length >
-                                          0) ...[
+                                      controller.childCount > 0) ...[
                                     InkWell(
                                       child: Container(
                                         width: 50,
@@ -544,9 +603,7 @@ class PostComment extends BaseView {
                                               ),
                                             ),
                                             Text(
-                                              controller
-                                                  .comment.children?.length
-                                                  .toString(),
+                                              controller.childCount.toString(),
                                               style: ServiceProvider
                                                   .instance
                                                   .instanceStyleService

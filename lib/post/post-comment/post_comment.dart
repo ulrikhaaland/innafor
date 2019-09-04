@@ -158,14 +158,16 @@ class PostCommentController extends BaseController {
       }
     });
 
-    postPageController.thePost.commentList
-        .removeWhere((c) => c.isChildOfId == comment.id);
-
-    postPageController.thePost.commentList.remove(this.comment);
-
     if (commentType == CommentType.topLevel) {
+      postPageController.commentContainerController.commentList
+          .remove(this.comment);
+
       postPageController.commentContainerController.setState(() {});
     } else {
+      postPageController.thePost.commentList
+          .removeWhere((c) => c.isChildOfId == comment.id);
+
+      postPageController.thePost.commentList.remove(this.comment);
       parentController.setState(() {});
     }
 

@@ -19,13 +19,9 @@ class Auth implements BaseAuth {
 
   Future<void> verifyPhoneNumber(
       {String phoneNumber, void Function(String id) theId}) async {
-    String _verificationId;
-    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId) {
-      _verificationId = verId;
-    };
+    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId) {};
 
     final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
-      _verificationId = verId;
       theId(verId);
     };
 

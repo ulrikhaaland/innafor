@@ -20,8 +20,19 @@ class PostCommentContainerController extends BaseController {
   final void Function(bool showComments) show;
   final User user;
 
+  List<Comment> commentList;
+
   PostCommentContainerController(
       {this.postPageController, this.show, this.user});
+
+  @override
+  void initState() {
+    commentList = postPageController.thePost.commentList
+        .where((c) => c.isChildOfId == null)
+        .toList();
+    // TODO: implement initState
+    super.initState();
+  }
 }
 
 class PostCommentContainer extends BaseView {
@@ -33,11 +44,6 @@ class PostCommentContainer extends BaseView {
   Widget build(BuildContext context) {
     if (!mounted && controller.postPageController.thePost.commentList != null)
       return Container();
-
-    List<Comment> commentList = controller
-        .postPageController.thePost.commentList
-        .where((c) => c.isChildOfId == null)
-        .toList();
 
     return Container(
       height: controller.showComments
@@ -104,7 +110,7 @@ class PostCommentContainer extends BaseView {
                 controller
                     .postPageController.thePost.commentList.isNotEmpty) ...[
               Column(
-                children: commentList.map((c) {
+                children: controller.commentList.map((c) {
                   return PostComment(
                     controller: PostCommentController(
                         postPageController: controller.postPageController,

@@ -232,7 +232,7 @@ class PostPage extends BaseView {
           .getWidthByPercentage(context, 7.5),
       backgroundColor:
           ServiceProvider.instance.instanceStyleService.appStyle.mimiPink,
-      backgroundImage: controller.user?.imageUrl != null
+      backgroundImage: controller.user.imageUrl != null
           ? AdvancedNetworkImage(controller.user.imageUrl, loadedCallback: () {
               controller.setProfileImage();
             })

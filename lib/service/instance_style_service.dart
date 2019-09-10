@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:innafor/model/app_style.dart';
 
 import '../service/service_provider.dart';
-import '../style/app_style.dart';
 
 class InstanceStyleService {
   AppStyle _appStyle = AppStyle();

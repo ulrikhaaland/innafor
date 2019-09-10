@@ -1,17 +1,12 @@
 import 'package:flutter/services.dart';
-import 'package:innafor/login/login_phone.dart';
-import 'package:innafor/objects/post.dart';
+import 'package:innafor/presentation/new-post/post.dart';
 import 'package:innafor/root_page.dart';
-import 'package:innafor/test.dart';
-
 import './service/instance_style_service.dart';
 import './service/theme_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-
 import 'package:flutter/material.dart';
 import './service/service_provider.dart';
 import './service/screen_service.dart';
-import 'new-post/post.dart';
 
 Future main() async {
   Color bg = Color.fromARGB(255, 105, 48, 109);
@@ -57,9 +52,6 @@ class _AppState extends State<App> {
         controller: widget._rootController,
       ),
       routes: {
-        "/test": (BuildContext c) => Test(
-              controller: TestController(),
-            ),
         "/home": (BuildContext c) => RootPage(
               controller: widget._rootController,
             ),

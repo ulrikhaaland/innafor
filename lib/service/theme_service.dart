@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../style/color_formatter.dart';
+import 'package:innafor/helper/color_formatter.dart';
 
 enum BusinessFlowType { order, actor, product, resource, meeting, campaign }
 

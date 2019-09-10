@@ -1,17 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:innafor/post/post_page.dart';
+import 'package:innafor/helper/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:innafor/presentation/animation/innafor_intro.dart';
+import 'package:innafor/presentation/base_controller.dart';
+import 'package:innafor/presentation/login/login_page.dart';
+import 'package:innafor/presentation/post/post_page.dart';
 import 'package:provider/provider.dart';
-import 'animation/innafor_intro.dart';
-import 'auth.dart';
-import 'login/login_page.dart';
-import 'objects/user.dart';
+import 'model/user.dart';
+import 'presentation/base_view.dart';
 import 'service/service_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-import './base_controller.dart';
-import './base_view.dart';
 
 enum AuthState {
   notAuthenticated,

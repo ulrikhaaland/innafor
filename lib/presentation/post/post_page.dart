@@ -14,17 +14,20 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:innafor/presentation/app-bar/innafor_app_bar.dart';
 import 'package:innafor/presentation/base_controller.dart';
 import 'package:innafor/presentation/base_view.dart';
+import 'package:innafor/presentation/post/post-comment/post_comment.dart';
 import 'package:innafor/presentation/post/post-comment/post_comment_container.dart';
 import 'package:innafor/presentation/post/post-comment/post_new_comment.dart';
 import 'package:innafor/presentation/post/post-image/post_image_container.dart';
+import 'package:innafor/presentation/post/post_utilities.dart';
 import 'package:innafor/presentation/widgets/buttons/fab.dart';
 import 'package:innafor/presentation/widgets/popup/bottom_sheet.dart';
 import 'package:innafor/presentation/widgets/popup/main_dialog.dart';
+import 'package:innafor/provider/comment_provider.dart';
 import 'package:innafor/service/service_provider.dart';
+import 'package:provider/provider.dart';
 
-class PostPageController extends BaseController {
-  final BaseAuth auth;
-
+class PostPageController extends BaseController
+    implements PostActionController {
   GlobalKey imageSizeKey = GlobalKey();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -35,11 +38,11 @@ class PostPageController extends BaseController {
 
   List<Post> postList;
 
-  Post thePost;
+  final Post post;
+
+  List<Comment> comments;
 
   bool loaded = false;
-
-  final User user;
 
   Future<bool> canDispose = Future.value(true);
 
@@ -55,11 +58,11 @@ class PostPageController extends BaseController {
 
   InnaforBottomSheetController bottomSheetController;
 
-  PostCommentContainerController commentContainerController;
-
   Widget x;
 
-  PostPageController({this.auth, this.user});
+  User user;
+
+  PostPageController({@required this.post, this.comments});
   @override
   void initState() {
     fabController = FabController(
@@ -69,8 +72,7 @@ class PostPageController extends BaseController {
           bottomSheetController.showBottomSheet(
             content: PostNewComment(
               controller: PostNewCommentController(
-                user: user,
-                thePost: thePost,
+                post: post,
                 newCommentType: NewCommentType.post,
                 parentController: this,
               ),
@@ -85,18 +87,8 @@ class PostPageController extends BaseController {
       showComments: showComments,
     );
 
-    commentContainerController = PostCommentContainerController(
-      postPageController: this,
-      show: (isShowing) {
-        showComments = isShowing;
-        bottomSheetController.showComments = isShowing;
-      },
-      user: user,
-    );
-
     setScrollListener();
-    postList = <Post>[];
-    getPost();
+
     super.initState();
   }
 
@@ -106,21 +98,6 @@ class PostPageController extends BaseController {
     scaffoldKey.currentState.dispose();
     super.dispose();
   }
-
-  // setComments() {
-  //   commentWidgetList = [];
-  //   postPageController.thePost.commentList
-  //       .where((c) => c.isChildOfId == null)
-  //       .map((c) => PostComment(
-  //             controller: PostCommentController(
-  //                 postPageController: postPageController,
-  //                 user: user,
-  //                 comment: c,
-  //                 commentType: CommentType.topLevel),
-  //           ))
-  //       .toList();
-  //   refresh();
-  // }
 
   void setScrollListener() {
     scrollController.addListener(() {
@@ -154,65 +131,23 @@ class PostPageController extends BaseController {
     user.profileImageWidget = x;
   }
 
-  void getPost() async {
-    QuerySnapshot postSnap =
-        await Firestore.instance.collection("post").getDocuments();
-
-    // Fetch posts
-    postSnap.documents.forEach((postDoc) async {
-      Post post = Post(
-          id: postDoc.documentID,
-          message: postDoc.data["message"],
-          imgUrlList: postDoc.data["img"],
-          commentList: <Comment>[],
-          title: postDoc.data["title"],
-          userName: postDoc.data["user_name"],
-          userNameId: postDoc.data["user_name_id"],
-          uid: postDoc.data["uid"],
-          docRef: postDoc.reference);
-
-      // Fetch comments for each post
-      postList.add(post);
-      post.commentList =
-          await getComments(path: post.docRef.path + "/comments", post: post);
+  @override
+  Future<void> deleteComment(Comment comment, {CommentType type}) {
+    setState(() {
+      comments.remove(comment);
     });
-    thePost = postList[0];
+    Navigator.of(context).pop();
+    // showShadowOverlay
+    return CommentProvider().deleteComment(comment);
   }
 
-  Future<List<Comment>> getComments({String path, Post post}) async {
-    List<Comment> commentList = <Comment>[];
-    QuerySnapshot qSnap =
-        await Firestore.instance.collection(path).getDocuments();
-    if (qSnap.documents.isNotEmpty) {
-      qSnap.documents.forEach((doc) {
-        Comment comment = Comment(
-            id: doc.documentID,
-            text: doc.data["text"],
-            timestamp: doc.data["timestamp"].toDate(),
-            favoriteIds: [],
-            ancestorIds: <String>[],
-            isChildOfId: doc.data["is_child_of_id"],
-            userImageUrl: doc.data["user_image_url"],
-            userName: doc.data["user_name"],
-            uid: doc.data["uid"],
-            userNameId: doc.data["user_name_id"],
-            docRef: doc.reference);
-        comment.favoriteIds.addAll(doc.data["favorite_ids"]?.cast<String>());
-        commentList.add(comment);
-        // Get user id's for comment favorites
-      });
+  @override
+  Future<void> saveComment(Comment comment) {
+    setState(() {
+      comments.add(comment);
+    });
 
-      commentList.forEach((c) => c.sort =
-          (commentList.where((child) => child.isChildOfId == c.id).length * 1) +
-              (c.favoriteIds.length * 0.6));
-      commentList.sort((a, b) => b.sort.compareTo(a.sort));
-
-      setState(() {});
-      return commentList;
-    } else {
-      setState(() {});
-      return commentList;
-    }
+    return CommentProvider().saveComment(comment: comment, postId: post.id);
   }
 }
 
@@ -234,6 +169,8 @@ class PostPage extends BaseView {
       controller.deviceHeight =
           ServiceProvider.instance.screenService.getHeight(context);
 
+    controller.user = Provider.of<User>(context);
+
     controller.x = CircleAvatar(
       radius: ServiceProvider.instance.screenService
           .getWidthByPercentage(context, 7.5),
@@ -243,7 +180,7 @@ class PostPage extends BaseView {
           ? AdvancedNetworkImage(controller.user.imageUrl, loadedCallback: () {
               controller.setProfileImage();
             })
-          : controller.setProfileImage(),
+          : null,
       child: Icon(
         FontAwesomeIcons.userSecret,
         color: ServiceProvider.instance.instanceStyleService.appStyle.textGrey,
@@ -252,9 +189,10 @@ class PostPage extends BaseView {
       ),
     );
 
-    var postCommentContainer = PostCommentContainer(
-      controller: controller.commentContainerController,
-    );
+    if (controller.user.imageUrl == null) {
+      controller.setProfileImage();
+    }
+
     return Scaffold(
       key: controller.scaffoldKey,
       backgroundColor: Colors.white,
@@ -285,18 +223,17 @@ class PostPage extends BaseView {
                                 height: ServiceProvider.instance.screenService
                                     .getHeightByPercentage(context, 2.5),
                               )
-                            : Container(),
-                        InnaforAppBar(
-                          controller:
-                              InnaforAppBarController(auth: controller.auth),
-                        ),
-                        controller.thePost != null
+                            : Container(
+                                height: ServiceProvider.instance.screenService
+                                    .getHeightByPercentage(context, 5),
+                              ),
+                        controller.post != null
                             ? PostImageContainer(
                                 controller: PostImageContainerController(
-                                    thePost: controller.thePost,
+                                    post: controller.post,
                                     openReport: () {
                                       DialogContentType dialogType;
-                                      if (controller.thePost.uid !=
+                                      if (controller.post.uid !=
                                           controller.user.id) {
                                         dialogType = DialogContentType.report;
                                       } else {
@@ -311,20 +248,18 @@ class PostPage extends BaseView {
                                             reportDialogInfo: ReportDialogInfo(
                                               reportedByUser: controller.user,
                                               reportedUser: User(
-                                                  id: controller.thePost.uid,
-                                                  userName: controller
-                                                      .thePost.userName),
+                                                  id: controller.post.uid,
+                                                  userName:
+                                                      controller.post.userName),
                                               reportType: ReportType.post,
-                                              id: controller.thePost.id,
+                                              id: controller.post.id,
                                             ),
                                           ),
                                         ),
                                       );
                                     },
                                     hasLoaded: () {
-                                      if (controller
-                                              .thePost.commentList.length >
-                                          0) {
+                                      if (controller.comments.length > 0) {
                                         scrollScreen(
                                           height: 300,
                                           controller:
@@ -371,11 +306,18 @@ class PostPage extends BaseView {
                       ],
                     ),
                   ),
-                  if (controller.thePost != null) ...[
-                    Container(
-                      height: getDefaultPadding(context) * 4,
+                  if (controller.post != null) ...[
+                    PostCommentContainer(
+                      controller: PostCommentContainerController(
+                        actionController: this.controller,
+                        postPageController: this.controller,
+                        show: (isShowing) {
+                          controller.showComments = isShowing;
+                          controller.bottomSheetController.showComments =
+                              isShowing;
+                        },
+                      ),
                     ),
-                    postCommentContainer,
                   ],
                 ],
               ),

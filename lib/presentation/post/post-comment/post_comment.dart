@@ -6,7 +6,9 @@ import 'package:innafor/model/report_dialog_info.dart';
 import 'package:innafor/model/user.dart';
 import 'package:innafor/presentation/base_controller.dart';
 import 'package:innafor/presentation/base_view.dart';
+import 'package:innafor/presentation/post/post-comment/post_comment_container.dart';
 import 'package:innafor/presentation/post/post-comment/post_comment_page.dart';
+import 'package:innafor/presentation/post/post_utilities.dart';
 import 'package:innafor/presentation/widgets/buttons/fab.dart';
 import 'package:innafor/presentation/widgets/circular_progress_indicator.dart';
 import 'package:innafor/presentation/widgets/popup/main_dialog.dart';
@@ -15,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 import '../post_page.dart';
 
@@ -25,9 +28,11 @@ class PostCommentController extends BaseController {
 
   final CommentType commentType;
 
+  final PostActionController actionController;
+
   bool favorite;
 
-  final User user;
+  User user;
 
   TextStyle bodyStyle;
 
@@ -38,6 +43,8 @@ class PostCommentController extends BaseController {
   final PostPageController postPageController;
 
   final PostCommentPageController postCommentPageController;
+
+  final PostCommentContainerController containerController;
 
   final FabController fabController;
 
@@ -56,12 +63,14 @@ class PostCommentController extends BaseController {
     this.parentId,
     this.user,
     this.postPageController,
+    this.actionController,
     this.answerToUserNameId,
     this.commentType,
     this.scaffoldKey,
     this.fabController,
     this.postCommentPageController,
     this.parentController,
+    this.containerController,
   });
 
   @override
@@ -72,17 +81,13 @@ class PostCommentController extends BaseController {
 
   @override
   void dispose() {
-    if (mounted) {
-      super.dispose();
-      scaffoldKey?.currentState?.dispose();
-    }
+    super.dispose();
+    scaffoldKey?.currentState?.dispose();
   }
 
   void getChildCount() {
     if (comment.id != null) {
-      childCount = postPageController.thePost.commentList
-          .where((c) => checkId(c))
-          .length;
+      childCount = postPageController.comments.where((c) => checkId(c)).length;
       setState(() {});
     } else {
       Timer(Duration(milliseconds: 100), () => getChildCount());
@@ -90,7 +95,7 @@ class PostCommentController extends BaseController {
   }
 
   bool checkId(Comment c) {
-    if (c.id == comment.id && c != comment) {
+    if (c.isChildOfId == comment.id && c != comment) {
       return true;
     } else {
       return false;
@@ -107,8 +112,6 @@ class PostCommentController extends BaseController {
         iconTextStyle =
             ServiceProvider.instance.instanceStyleService.appStyle.timestamp;
 
-        parentController = postPageController;
-
         break;
 
       case CommentType.response:
@@ -118,8 +121,6 @@ class PostCommentController extends BaseController {
             .instance.instanceStyleService.appStyle.iconSizeExtraSmall;
         iconTextStyle =
             ServiceProvider.instance.instanceStyleService.appStyle.timestamp;
-
-        parentController = postCommentPageController;
 
         break;
 
@@ -131,8 +132,6 @@ class PostCommentController extends BaseController {
         iconTextStyle =
             ServiceProvider.instance.instanceStyleService.appStyle.body1Grey;
 
-        parentController = postCommentPageController;
-
         break;
 
       default:
@@ -140,48 +139,13 @@ class PostCommentController extends BaseController {
             ServiceProvider.instance.instanceStyleService.appStyle.body1Black;
     }
   }
-
-  void deleteComment() {
-    delete(String commentId) {
-      Firestore.instance
-          .document("post/${postPageController.thePost.id}/comments/$commentId")
-          .delete();
-    }
-
-    delete(comment.id);
-
-    postPageController.thePost.commentList.forEach((c) {
-      if (c.isChildOfId == comment.id) {
-        delete(c.id);
-      }
-    });
-
-    postPageController.thePost.commentList
-        .removeWhere((c) => c.isChildOfId == comment.id);
-
-    postPageController.thePost.commentList.remove(comment);
-
-    if (commentType == CommentType.topLevel) {
-      // postPageController.commentContainerController.setComments();
-
-      // refresh();
-    } else {
-      parentController.refresh();
-    }
-
-    Navigator.pop(context);
-
-    if (commentType == CommentType.comment) {
-      postPageController.fabController.showFabAsMethod(true);
-      Navigator.of(context).pop();
-    }
-  }
 }
 
 class PostComment extends BaseView {
+  final Key key;
   final PostCommentController controller;
 
-  PostComment({this.controller});
+  PostComment({this.controller, this.key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -190,8 +154,6 @@ class PostComment extends BaseView {
     if (controller.childCount == null) {
       return CPI(false);
     }
-
-    // controller.childCount -= 1;
 
     double padding = getDefaultPadding(context);
 
@@ -207,6 +169,7 @@ class PostComment extends BaseView {
             MaterialPageRoute(
               builder: (context) => PostCommentPage(
                 controller: PostCommentPageController(
+                  actionController: controller.actionController,
                   comment: controller.comment,
                   user: controller.user,
                   postPageController: controller.postPageController,
@@ -234,23 +197,25 @@ class PostComment extends BaseView {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: padding,
-                            ),
-                            child: CircleAvatar(
-                              radius: ServiceProvider.instance.screenService
-                                  .getWidthByPercentage(context, 7.5),
-                              backgroundColor: ServiceProvider
+                          CircleAvatar(
+                            radius: ServiceProvider.instance.screenService
+                                .getWidthByPercentage(context, 7.5),
+                            backgroundColor: ServiceProvider.instance
+                                .instanceStyleService.appStyle.mimiPink,
+                            backgroundImage:
+                                controller.comment.userImageUrl != null
+                                    ? AdvancedNetworkImage(
+                                        controller.comment.userImageUrl)
+                                    : null,
+                            child: Icon(
+                              FontAwesomeIcons.userSecret,
+                              color: ServiceProvider.instance
+                                  .instanceStyleService.appStyle.textGrey,
+                              size: ServiceProvider
                                   .instance
                                   .instanceStyleService
                                   .appStyle
-                                  .mountbattenPink,
-                              backgroundImage:
-                                  controller.comment.userImageUrl != null
-                                      ? AdvancedNetworkImage(
-                                          controller.comment.userImageUrl)
-                                      : null,
+                                  .iconSizeStandard,
                             ),
                           ),
 
@@ -447,8 +412,15 @@ class PostComment extends BaseView {
                                           .showBottomSheet(
                                         content: MainDialog(
                                           controller: MainDialogController(
-                                            onDeleteComment: () =>
-                                                controller.deleteComment(),
+                                            onDeleteComment: () {
+                                              controller.parentController
+                                                  .deleteComment(
+                                                      controller.comment,
+                                                      type: controller
+                                                          .commentType);
+                                              controller.parentController
+                                                  .setState(() {});
+                                            },
                                             dialogContentType: dialogType,
                                             divide: true,
                                             reportDialogInfo: ReportDialogInfo(
@@ -500,7 +472,7 @@ class PostComment extends BaseView {
                             Expanded(
                               child: Text(
                                 " @" +
-                                        controller.postPageController.thePost
+                                        controller.postPageController.post
                                             .userNameId ??
                                     "",
                                 style: controller.iconTextStyle,
@@ -646,7 +618,8 @@ class PostComment extends BaseView {
 
     if (controller.commentType == CommentType.comment) {
       return Card(
-        elevation: 3,
+        margin: EdgeInsets.zero,
+        elevation: 6,
         child: commentWidget,
       );
     }

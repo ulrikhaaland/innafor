@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 import '../post_container.dart';
 
 class PostImageContainerController extends BaseController {
-  final Post thePost;
+  final Post post;
 
   var url;
 
@@ -41,21 +41,21 @@ class PostImageContainerController extends BaseController {
   bool video = false;
 
   PostImageContainerController(
-      {this.hasLoaded, this.thePost, this.openReport, this.onSave});
+      {this.hasLoaded, this.post, this.openReport, this.onSave});
 
   @override
   void initState() {
-    if (thePost.imgUrlList.isNotEmpty) getImages();
+    if (post.imgUrlList.isNotEmpty) getImages();
 
     super.initState();
   }
 
   void getImages() {
     imageList = <AdvancedNetworkImage>[];
-    for (int i = 0; i < thePost.imgUrlList.length; i++) {
+    for (int i = 0; i < post.imgUrlList.length; i++) {
       if (i == 0) {
         imageList.add(AdvancedNetworkImage(
-          thePost.imgUrlList[0],
+          post.imgUrlList[0],
           loadedCallback: () {
             loaded = true;
             Timer(Duration(milliseconds: 50), () {
@@ -83,7 +83,7 @@ class PostImageContainerController extends BaseController {
           },
         ));
       } else {
-        imageList.add(AdvancedNetworkImage(thePost.imgUrlList[i]));
+        imageList.add(AdvancedNetworkImage(post.imgUrlList[i]));
       }
     }
     postImageController = PostImageController(
@@ -95,7 +95,7 @@ class PostImageContainerController extends BaseController {
 
   setContainerCtrlr() {
     postContainerController = PostContainerController(
-      thePost: thePost,
+      post: post,
       imageWidth: imageWidth,
     );
   }
@@ -146,7 +146,7 @@ class PostImageContainer extends BaseView {
                 User user = Provider.of<User>(context);
                 user.docRef
                     .collection("bookmark")
-                    .document(controller.thePost.id)
+                    .document(controller.post.id)
                     .setData({});
               },
               child: Icon(

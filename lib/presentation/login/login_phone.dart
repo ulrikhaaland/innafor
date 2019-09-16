@@ -88,7 +88,6 @@ class PhoneLoginController extends BaseController {
 
   @override
   void dispose() {
-    formKey.currentState.dispose();
     super.dispose();
   }
 }

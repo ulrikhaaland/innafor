@@ -7,6 +7,7 @@ import 'package:innafor/model/user.dart';
 import 'package:innafor/presentation/base_controller.dart';
 import 'package:innafor/presentation/base_view.dart';
 import 'package:innafor/service/service_provider.dart';
+import 'package:provider/provider.dart';
 
 enum NewCommentType { comment, post }
 
@@ -17,7 +18,7 @@ class PostNewCommentController extends BaseController {
 
   bool canPublish = false;
 
-  final Post thePost;
+  final Post post;
 
   final Comment comment;
 
@@ -31,7 +32,7 @@ class PostNewCommentController extends BaseController {
 
   PostNewCommentController(
       {this.user,
-      this.thePost,
+      this.post,
       this.newCommentType,
       this.comment,
       this.parentController});
@@ -65,6 +66,8 @@ class PostNewComment extends BaseView {
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) return Container();
+
     return Container(
       width: ServiceProvider.instance.screenService
           .getWidthByPercentage(context, 100),
@@ -127,22 +130,18 @@ class PostNewComment extends BaseView {
                                     timestamp: DateTime.now(),
                                     uid: controller.user.id,
                                     userImageUrl: controller.user.imageUrl,
-                                    userName:
-                                        controller.user.userName ?? "Ola Nord",
+                                    userName: controller.user.userName ?? "N/A",
                                     userRating: controller.user.rating,
                                     userNameId: controller.user.userNameId,
                                     favoriteIds: [],
-                                    ancestorIds: [],
                                   );
-                                  if (controller.newCommentType ==
+                                  if (controller.newCommentType !=
                                       NewCommentType.post) {
-                                    controller.thePost.commentList.add(comment);
-                                  } else {
-                                    controller.thePost.commentList.add(comment);
                                     comment.isChildOfId = controller.comment.id;
                                   }
-                                  comment.addComment(
-                                      postId: controller.thePost.id);
+                                  controller.parentController
+                                      .saveComment(comment);
+
                                   controller.parentController.setState(() {});
                                   Navigator.pop(context);
                                 }

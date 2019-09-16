@@ -2,12 +2,13 @@ import 'package:innafor/helper/helper.dart';
 import 'package:innafor/model/post.dart';
 import 'package:innafor/presentation/base_controller.dart';
 import 'package:innafor/presentation/base_view.dart';
+import 'package:innafor/presentation/post/post_utilities.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PostContainerController extends BaseController {
-  Post thePost;
+  Post post;
 
   double imageWidth;
 
@@ -16,7 +17,7 @@ class PostContainerController extends BaseController {
   bool expanded = false;
 
   PostContainerController({
-    this.thePost,
+    this.post,
     this.imageWidth,
     this.imageHeight,
   });
@@ -62,26 +63,24 @@ class PostContainer extends BaseView {
                     Expanded(
                       child: Container(
                         child: Text(
-                          controller.thePost.title,
+                          controller.post.title,
                           style: ServiceProvider.instance.instanceStyleService
                               .appStyle.titleWhite,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
-                    controller.thePost.message.length > 120
+                    controller.post.message.length > 120
                         ? Align(
                             alignment: Alignment.centerRight,
                             child: IconButton(
                               padding: EdgeInsets.only(
                                   left: getDefaultPadding(context) * 2),
-                              icon: controller.thePost.commentList.length > 0
-                                  ? Icon(
-                                      controller.expanded
-                                          ? FontAwesomeIcons.minus
-                                          : FontAwesomeIcons.plus,
-                                    )
-                                  : Container(),
+                              icon: Icon(
+                                controller.expanded
+                                    ? FontAwesomeIcons.minus
+                                    : FontAwesomeIcons.plus,
+                              ),
                               color: Colors.white,
                               iconSize: ServiceProvider.instance
                                   .instanceStyleService.appStyle.iconSizeSmall,
@@ -102,10 +101,10 @@ class PostContainer extends BaseView {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              if (controller.thePost.message.length > 120 &&
+                              if (controller.post.message.length > 120 &&
                                   !controller.expanded) ...[
                                 Text(
-                                  controller.thePost.message.substring(0, 120) +
+                                  controller.post.message.substring(0, 120) +
                                       "...",
                                   style: ServiceProvider.instance
                                       .instanceStyleService.appStyle.body1,
@@ -125,7 +124,7 @@ class PostContainer extends BaseView {
                                         shrinkWrap: true,
                                         itemCount: 1,
                                         itemBuilder: (context, index) => Text(
-                                          controller.thePost.message,
+                                          controller.post.message,
                                           style: ServiceProvider
                                               .instance
                                               .instanceStyleService

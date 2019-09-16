@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:innafor/presentation/animation/innafor_intro.dart';
 import 'package:innafor/presentation/base_controller.dart';
 import 'package:innafor/presentation/login/login_page.dart';
+import 'package:innafor/presentation/post/post_dictator.dart';
 import 'package:innafor/presentation/post/post_page.dart';
+import 'package:innafor/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'model/user.dart';
 import 'presentation/base_view.dart';
@@ -51,9 +53,8 @@ class RootPageController extends BaseController {
     }
 
     if (firebaseUser != null) {
-      DocumentSnapshot docSnap =
-          await Firestore.instance.document("users/${firebaseUser.uid}").get();
-      if (!docSnap.exists) {
+      _user = await UserProvider().get(firebaseUser.uid);
+      if (_user == null) {
         _user = User(
           userName: null,
           userNameId: null,
@@ -66,26 +67,12 @@ class RootPageController extends BaseController {
           notifications: 0,
           blockedUserIds: <String>[],
           bookmarkIds: <String>[],
-          docRef: docSnap.reference,
         );
 
-        await Firestore.instance
-            .document("users/${firebaseUser.uid}")
-            .setData(_user.toJson());
-      } else {
-        _user = User(
-          docRef: docSnap.reference,
-          blockedUserIds: [],
-          bookmarkIds: [],
-        );
-        _user.fromJson(docSnap.data);
+        await UserProvider().set(_user);
       }
-      // Get list of blocked users id
-      // docSnap.reference.collection("blocked").getDocuments().then((qSnap) =>
-      //     qSnap.documents
-      //         .forEach((doc) => _user.blockedUserId.add(doc.documentID)));
 
-      _updateFcmToken();
+      UserProvider().updateFcmToken(_user, firebaseMessaging);
     }
 
     this.refresh();
@@ -95,15 +82,6 @@ class RootPageController extends BaseController {
   Future asAnon() async {
     firebaseUser = await auth.asAnon();
     refresh();
-  }
-
-  _updateFcmToken() async {
-    var messagingToken = await firebaseMessaging.getToken();
-    _user.fcm = messagingToken;
-
-    firestoreInstance
-        .document("users/${_user.id}")
-        .updateData({"fcm": messagingToken});
   }
 }
 
@@ -161,9 +139,14 @@ class RootPage extends BaseView {
         ),
       );
     } else {
-      return PostPage(
-        controller:
-            PostPageController(auth: controller.auth, user: controller._user),
+      return Provider<User>.value(
+        value: controller._user,
+        child: PostDictatorPage(
+          controller: PostDictatorController(
+            auth: controller.auth,
+            user: controller._user,
+          ),
+        ),
       );
     }
   }

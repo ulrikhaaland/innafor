@@ -4,6 +4,7 @@ import 'package:innafor/model/report_dialog_info.dart';
 import 'package:innafor/presentation/base_controller.dart';
 import 'package:innafor/presentation/base_view.dart';
 import 'package:innafor/presentation/widgets/popup/popup-content/comment_report_content_row.dart';
+import 'package:innafor/provider/user_provider.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +49,7 @@ class MainDialogController extends BaseController {
                 reportDialogInfo.reportedByUser.blockedUserIds
                     .add(reportDialogInfo.reportedUser.id);
               }
-              reportDialogInfo.reportedByUser.update();
+              UserProvider().update(reportDialogInfo.reportedByUser);
               Navigator.pop(context);
             },
             text: reportDialogInfo.reportedUser.blocked

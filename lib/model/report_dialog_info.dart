@@ -4,10 +4,10 @@ import 'package:innafor/model/user.dart';
 enum ReportType { comment, post }
 
 class ReportDialogInfo {
-  final ReportType reportType;
-  final User reportedUser;
-  final User reportedByUser;
-  final String id;
+  ReportType reportType;
+  User reportedUser;
+  User reportedByUser;
+  String id;
   String typeString;
 
   ReportDialogInfo({

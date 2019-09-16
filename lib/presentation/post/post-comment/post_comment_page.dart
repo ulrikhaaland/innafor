@@ -12,15 +12,21 @@ import 'package:innafor/service/service_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../post_page.dart';
+import '../post_utilities.dart';
 
-class PostCommentPageController extends BaseController {
+class PostCommentPageController extends BaseController
+    implements PostActionController {
   Comment comment;
+
+  List<Comment> children;
 
   final User user;
 
   FabController fabController;
 
   final PostPageController postPageController;
+
+  final PostActionController actionController;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -32,16 +38,14 @@ class PostCommentPageController extends BaseController {
     this.comment,
     this.user,
     this.postPageController,
+    this.actionController,
   });
 
   @override
   void initState() {
-    // Order comments by likes and replies
-    // if (comment.children.length > 1) {
-    //   comment.children.forEach((c) =>
-    //       c.sort = (c.children.length * 1) + (c.favoriteIds.length * 0.6));
-    //   comment.children.sort((a, b) => b.sort.compareTo(a.sort));
-    // }
+    children = postPageController.comments
+        .where((c) => c.isChildOfId == comment.id)
+        .toList();
     fabController = FabController(
         showFab: true,
         iconData: FontAwesomeIcons.reply,
@@ -50,7 +54,7 @@ class PostCommentPageController extends BaseController {
             content: PostNewComment(
               controller: PostNewCommentController(
                 user: user,
-                thePost: postPageController.thePost,
+                post: postPageController.post,
                 newCommentType: NewCommentType.comment,
                 comment: comment,
                 parentController: this,
@@ -71,8 +75,32 @@ class PostCommentPageController extends BaseController {
 
   @override
   void dispose() {
-    scaffoldKey.currentState.dispose();
-    super.dispose();
+    if (mounted) {
+      scaffoldKey.currentState?.dispose();
+      super.dispose();
+    }
+  }
+
+  @override
+  Future<void> saveComment(Comment comment) {
+    return actionController.saveComment(comment).then((_) {
+      setState(() {
+        children.add(comment);
+      });
+    });
+  }
+
+  @override
+  Future<void> deleteComment(Comment comment, {CommentType type}) {
+    return actionController.deleteComment(comment).then((_) {
+      if (type == CommentType.comment) {
+        Navigator.of(context).pop();
+      } else {
+        setState(() {
+          children.remove(comment);
+        });
+      }
+    });
   }
 }
 
@@ -87,11 +115,12 @@ class PostCommentPage extends BaseView {
 
     Widget commentWidget = PostComment(
       controller: PostCommentController(
+        actionController: controller.actionController,
         comment: controller.comment,
         commentType: CommentType.comment,
         user: controller.user,
         postPageController: controller.postPageController,
-        postCommentPageController: this.controller,
+        parentController: this.controller,
       ),
     );
     return Scaffold(
@@ -106,67 +135,95 @@ class PostCommentPage extends BaseView {
         children: <Widget>[
           Align(
             alignment: Alignment.topCenter,
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    height: ServiceProvider.instance.screenService
-                        .getHeightByPercentage(context, 5),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () async {
-                          if (mounted) {
-                            await controller.postPageController.allowDispose();
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              left: getDefaultPadding(context) * 4),
-                          child: Icon(Icons.arrow_back_ios),
-                        ),
-                      ),
-                      Text(
-                        "Kommentar",
-                        style: ServiceProvider.instance.instanceStyleService
-                            .appStyle.secondaryTitle,
-                      ),
-                      Padding(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: ServiceProvider.instance.screenService
+                      .getHeightByPercentage(context, 5),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () async {
+                        if (mounted) {
+                          await controller.postPageController.allowDispose();
+
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Padding(
                         padding: EdgeInsets.only(
-                            right: getDefaultPadding(context) * 4),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.transparent,
-                        ),
+                            left: getDefaultPadding(context) * 4),
+                        child: Icon(Icons.arrow_back_ios),
                       ),
-                    ],
-                  ),
-                  Container(
-                    height: ServiceProvider.instance.screenService
-                        .getHeightByPercentage(context, 2.5),
-                  ),
-                  commentWidget,
-                  Column(
-                    children: controller.postPageController.thePost.commentList
-                        .where((c) => c.isChildOfId == controller.comment.id)
-                        .map((c) {
+                    ),
+                    Text(
+                      "Kommentar",
+                      style: ServiceProvider.instance.instanceStyleService
+                          .appStyle.secondaryTitle,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: getDefaultPadding(context) * 4),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  height: ServiceProvider.instance.screenService
+                      .getHeightByPercentage(context, 2.5),
+                ),
+                commentWidget,
+                Container(
+                  width: ServiceProvider.instance.screenService
+                      .getWidthByPercentage(context, 93),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: controller.children.length,
+                    itemBuilder: (context, index) {
+                      Comment c = controller.children[index];
+
                       return PostComment(
+                        key: Key(c.id),
                         controller: PostCommentController(
-                            answerToUserNameId: controller.comment.userNameId,
-                            postPageController: controller.postPageController,
-                            comment: c,
-                            user: controller.user,
-                            commentType: CommentType.response,
-                            parentId: controller.comment.id,
-                            postCommentPageController: this.controller),
+                          actionController: controller.actionController,
+                          parentController: controller,
+                          answerToUserNameId: controller.comment.userNameId,
+                          postPageController: controller.postPageController,
+                          comment: c,
+                          user: controller.user,
+                          commentType: CommentType.response,
+                          parentId: controller.comment.id,
+                        ),
                       );
-                    }).toList(),
-                  )
-                ],
-              ),
+                    },
+                  ),
+                ),
+                // Column(
+                //   children: controller.postPageController.comments
+                //       .where((c) => c.isChildOfId == controller.comment.id)
+                //       .map((c) {
+                //     return PostComment(
+                //       key: Key(c.id),
+                //       controller: PostCommentController(
+                //         actionController: controller.actionController,
+                //         parentController: controller,
+                //         answerToUserNameId: controller.comment.userNameId,
+                //         postPageController: controller.postPageController,
+                //         comment: c,
+                //         user: controller.user,
+                //         commentType: CommentType.response,
+                //         parentId: controller.comment.id,
+                //       ),
+                //     );
+                //   }).toList(),
+                // )
+              ],
             ),
           ),
           InnaforBottomSheet(

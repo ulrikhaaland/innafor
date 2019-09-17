@@ -15,6 +15,8 @@ class PostCommentContainerController extends BaseController {
 
   final PostPageController postPageController;
 
+  List<Comment> comments;
+
   final void Function(bool showComments) show;
   User user;
 
@@ -27,9 +29,10 @@ class PostCommentContainerController extends BaseController {
     this.user,
   });
 
-  @override
-  void initState() {
-    super.initState();
+  void getComments() {
+    comments = postPageController.comments
+        .where((c) => c.isChildOfId == null)
+        .toList();
   }
 }
 
@@ -42,6 +45,8 @@ class PostCommentContainer extends BaseView {
   Widget build(BuildContext context) {
     if (!mounted && controller.postPageController.comments != null)
       return Container();
+
+    controller.getComments();
 
     controller.user = Provider.of<User>(context);
     return Container(
@@ -115,25 +120,21 @@ class PostCommentContainer extends BaseView {
                   .getWidthByPercentage(context, 90),
               child: ListView.builder(
                 padding: EdgeInsets.zero,
-                // shrinkWrap: true,
-                itemCount: controller.postPageController.comments.length,
+                shrinkWrap: true,
+                itemCount: controller.comments.length,
                 itemBuilder: (context, index) {
-                  if (controller
-                          .postPageController.comments[index].isChildOfId ==
-                      null)
-                    return PostComment(
-                      key:
-                          Key(controller.postPageController.comments[index].id),
-                      controller: PostCommentController(
-                          actionController: controller.actionController,
-                          postPageController: controller.postPageController,
-                          parentController: controller.postPageController,
-                          containerController: this.controller,
-                          user: controller.user,
-                          comment:
-                              controller.postPageController.comments[index],
-                          commentType: CommentType.topLevel),
-                    );
+                  Comment c = controller.comments[index];
+
+                  return PostComment(
+                    key: Key(c.id),
+                    controller: PostCommentController(
+                        actionController: controller.actionController,
+                        postPageController: controller.postPageController,
+                        parentController: controller.postPageController,
+                        user: controller.user,
+                        comment: c,
+                        commentType: CommentType.topLevel),
+                  );
                 },
               ),
             ),

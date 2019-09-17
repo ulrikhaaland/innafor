@@ -42,12 +42,6 @@ class PostCommentController extends BaseController {
 
   final PostPageController postPageController;
 
-  final PostCommentPageController postCommentPageController;
-
-  final PostCommentContainerController containerController;
-
-  final FabController fabController;
-
   final String answerToUserNameId;
 
   int childCount;
@@ -67,17 +61,8 @@ class PostCommentController extends BaseController {
     this.answerToUserNameId,
     this.commentType,
     this.scaffoldKey,
-    this.fabController,
-    this.postCommentPageController,
     this.parentController,
-    this.containerController,
   });
-
-  @override
-  void initState() {
-    getChildCount();
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -150,6 +135,8 @@ class PostComment extends BaseView {
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
+
+    controller.getChildCount();
 
     if (controller.childCount == null) {
       return CPI(false);

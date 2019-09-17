@@ -43,9 +43,6 @@ class PostCommentPageController extends BaseController
 
   @override
   void initState() {
-    children = postPageController.comments
-        .where((c) => c.isChildOfId == comment.id)
-        .toList();
     fabController = FabController(
         showFab: true,
         iconData: FontAwesomeIcons.reply,
@@ -112,6 +109,10 @@ class PostCommentPage extends BaseView {
   @override
   Widget build(BuildContext context) {
     if (!mounted) return Container();
+
+    controller.children = controller.postPageController.comments
+        .where((c) => c.isChildOfId == controller.comment.id)
+        .toList();
 
     Widget commentWidget = PostComment(
       controller: PostCommentController(
@@ -204,25 +205,6 @@ class PostCommentPage extends BaseView {
                     },
                   ),
                 ),
-                // Column(
-                //   children: controller.postPageController.comments
-                //       .where((c) => c.isChildOfId == controller.comment.id)
-                //       .map((c) {
-                //     return PostComment(
-                //       key: Key(c.id),
-                //       controller: PostCommentController(
-                //         actionController: controller.actionController,
-                //         parentController: controller,
-                //         answerToUserNameId: controller.comment.userNameId,
-                //         postPageController: controller.postPageController,
-                //         comment: c,
-                //         user: controller.user,
-                //         commentType: CommentType.response,
-                //         parentId: controller.comment.id,
-                //       ),
-                //     );
-                //   }).toList(),
-                // )
               ],
             ),
           ),

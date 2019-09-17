@@ -7,7 +7,7 @@ part of 'comment.dart';
 // **************************************************************************
 
 Comment _$CommentFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const ['favoriteIds']);
+  $checkKeys(json, disallowNullValues: const ['favoriteIds', 'hierarchy']);
   return Comment(
     id: json['id'] as String,
     isChildOfId: json['isChildOfId'] as String,
@@ -22,6 +22,7 @@ Comment _$CommentFromJson(Map<String, dynamic> json) {
     favoriteIds:
         (json['favoriteIds'] as List)?.map((e) => e as String)?.toList(),
     userRating: (json['userRating'] as num)?.toDouble(),
+    hierarchy: (json['hierarchy'] as List)?.map((e) => e as String)?.toList(),
   );
 }
 
@@ -44,6 +45,7 @@ Map<String, dynamic> _$CommentToJson(Comment instance) {
   }
 
   writeNotNull('favoriteIds', instance.favoriteIds);
+  writeNotNull('hierarchy', instance.hierarchy);
   val['userRating'] = instance.userRating;
   return val;
 }

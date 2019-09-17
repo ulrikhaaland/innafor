@@ -134,6 +134,7 @@ class PostNewComment extends BaseView {
                                     userRating: controller.user.rating,
                                     userNameId: controller.user.userNameId,
                                     favoriteIds: [],
+                                    hierarchy: [],
                                   );
                                   if (controller.newCommentType !=
                                       NewCommentType.post) {

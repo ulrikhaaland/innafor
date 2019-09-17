@@ -11,6 +11,8 @@ class PostProvider {
 
     post.id = postSnap.documentID;
 
+    post.docRef = postSnap.reference;
+
     return post;
   }
 }

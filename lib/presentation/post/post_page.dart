@@ -23,6 +23,7 @@ import 'package:innafor/presentation/widgets/buttons/fab.dart';
 import 'package:innafor/presentation/widgets/popup/bottom_sheet.dart';
 import 'package:innafor/presentation/widgets/popup/main_dialog.dart';
 import 'package:innafor/provider/comment_provider.dart';
+import 'package:innafor/provider/crud_provider.dart';
 import 'package:innafor/service/service_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +55,8 @@ class PostPageController extends BaseController
 
   FabController fabController;
 
+  PostCommentContainerController containerController;
+
   double deviceHeight;
 
   InnaforBottomSheetController bottomSheetController;
@@ -65,6 +68,14 @@ class PostPageController extends BaseController
   PostPageController({@required this.post, this.comments});
   @override
   void initState() {
+    containerController = PostCommentContainerController(
+      actionController: this,
+      postPageController: this,
+      show: (isShowing) {
+        showComments = isShowing;
+        bottomSheetController.showComments = isShowing;
+      },
+    );
     fabController = FabController(
         iconData: FontAwesomeIcons.plus,
         showFab: false,
@@ -75,6 +86,7 @@ class PostPageController extends BaseController
                 post: post,
                 newCommentType: NewCommentType.post,
                 parentController: this,
+                user: user,
               ),
             ),
           );
@@ -94,8 +106,8 @@ class PostPageController extends BaseController
 
   @override
   void dispose() {
-    scrollController.dispose();
-    scaffoldKey.currentState.dispose();
+    scrollController?.dispose();
+    scaffoldKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -133,21 +145,49 @@ class PostPageController extends BaseController
 
   @override
   Future<void> deleteComment(Comment comment, {CommentType type}) {
-    setState(() {
-      comments.remove(comment);
-    });
+    comments.remove(comment);
+
     Navigator.of(context).pop();
-    // showShadowOverlay
-    return CommentProvider().deleteComment(comment);
+
+    if (comments.isEmpty) {
+      containerController.showComments = false;
+    }
+
+    refresh();
+
+    return CommentProvider().delete(comment, comments);
   }
 
   @override
   Future<void> saveComment(Comment comment) {
-    setState(() {
-      comments.add(comment);
-    });
+    comments.add(comment);
 
-    return CommentProvider().saveComment(comment: comment, postId: post.id);
+    String childId;
+    String isChildOfId;
+
+    refresh();
+
+    return CommentProvider()
+        .saveComment(comment: comment, postRef: post.docRef)
+        .then((_) {
+      if (comment.isChildOfId != null) {
+        childId = comment.id;
+        isChildOfId = comment.isChildOfId;
+        while (isChildOfId != null) {
+          Comment parent =
+              comments.firstWhere((c) => c.id == isChildOfId, orElse: () {
+            return;
+          });
+          parent.hierarchy.add(childId);
+          if (parent.isChildOfId != null) {
+            isChildOfId = parent.isChildOfId;
+            childId = parent.id;
+          } else {
+            isChildOfId = null;
+          }
+        }
+      }
+    });
   }
 }
 
@@ -308,16 +348,7 @@ class PostPage extends BaseView {
                   ),
                   if (controller.post != null) ...[
                     PostCommentContainer(
-                      controller: PostCommentContainerController(
-                        actionController: this.controller,
-                        postPageController: this.controller,
-                        show: (isShowing) {
-                          controller.showComments = isShowing;
-                          controller.bottomSheetController.showComments =
-                              isShowing;
-                        },
-                      ),
-                    ),
+                        controller: controller.containerController),
                   ],
                 ],
               ),

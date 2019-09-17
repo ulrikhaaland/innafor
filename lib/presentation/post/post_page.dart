@@ -18,6 +18,7 @@ import 'package:innafor/presentation/post/post-comment/post_comment.dart';
 import 'package:innafor/presentation/post/post-comment/post_comment_container.dart';
 import 'package:innafor/presentation/post/post-comment/post_new_comment.dart';
 import 'package:innafor/presentation/post/post-image/post_image_container.dart';
+import 'package:innafor/presentation/post/post-indicator/post_indicator.dart';
 import 'package:innafor/presentation/post/post_utilities.dart';
 import 'package:innafor/presentation/widgets/buttons/fab.dart';
 import 'package:innafor/presentation/widgets/popup/bottom_sheet.dart';
@@ -310,38 +311,8 @@ class PostPage extends BaseView {
                                     }),
                               )
                             : Container(),
-                        RatingBar(
-                          itemPadding:
-                              EdgeInsets.only(left: 8, right: 8, top: 8),
-                          onRatingUpdate: (r) {
-                            print(r);
-                          },
-                          allowHalfRating: true,
-                          ratingWidget: RatingWidget(
-                              empty: Icon(
-                                FontAwesomeIcons.star,
-                                color: ServiceProvider
-                                    .instance
-                                    .instanceStyleService
-                                    .appStyle
-                                    .inactiveIconColor,
-                              ),
-                              full: Icon(
-                                FontAwesomeIcons.solidStar,
-                                color: ServiceProvider
-                                    .instance
-                                    .instanceStyleService
-                                    .appStyle
-                                    .mountbattenPink,
-                              ),
-                              half: Icon(
-                                FontAwesomeIcons.starHalfAlt,
-                                color: ServiceProvider
-                                    .instance
-                                    .instanceStyleService
-                                    .appStyle
-                                    .mountbattenPink,
-                              )),
+                        PostIndicator(
+                          postId: controller.post.id,
                         ),
                       ],
                     ),

@@ -21,7 +21,7 @@ class CrudProvider {
     return await _firestoreInstance.collection(path).getDocuments();
   }
 
-  Future read(dynamic model, String path) async {
+  Future<DocumentSnapshot> read(String path) async {
     return await _firestoreInstance.document(path).get();
   }
 

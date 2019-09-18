@@ -76,7 +76,7 @@ class InnaforAppBar extends BaseView {
                     icon: Icon(
                       FontAwesomeIcons.question,
                       color: ServiceProvider.instance.instanceStyleService
-                          .appStyle.activeIconColor,
+                          .appStyle.mountbattenPink,
                     ),
                     onPressed: () => null),
                 IconButton(

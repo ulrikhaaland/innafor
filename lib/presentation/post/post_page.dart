@@ -42,6 +42,8 @@ class PostPageController extends BaseController
 
   final Post post;
 
+  final VoidCallback onDone;
+
   List<Comment> comments;
 
   bool loaded = false;
@@ -54,7 +56,11 @@ class PostPageController extends BaseController
 
   double imgContainerWidth;
 
+  bool preview;
+
   FabController fabController;
+
+  PostImageContainer postImageContainer;
 
   PostCommentContainerController containerController;
 
@@ -66,9 +72,11 @@ class PostPageController extends BaseController
 
   User user;
 
-  PostPageController({@required this.post, this.comments});
+  PostPageController(
+      {@required this.post, this.comments, this.onDone, this.preview});
   @override
   void initState() {
+    postImageContainer = PostImageContainer();
     containerController = PostCommentContainerController(
       actionController: this,
       postPageController: this,
@@ -77,30 +85,33 @@ class PostPageController extends BaseController
         bottomSheetController.showComments = isShowing;
       },
     );
-    fabController = FabController(
-        iconData: FontAwesomeIcons.plus,
-        showFab: false,
-        onPressed: () {
-          bottomSheetController.showBottomSheet(
-            content: PostNewComment(
-              controller: PostNewCommentController(
-                post: post,
-                newCommentType: NewCommentType.post,
-                parentController: this,
-                user: user,
-              ),
-            ),
-          );
-        });
-    bottomSheetController = InnaforBottomSheetController(
-      scaffoldKey: scaffoldKey,
-      fabController: fabController,
-      context: context,
-      withShadowOverlay: true,
-      showComments: showComments,
-    );
 
-    setScrollListener();
+    if (!preview) {
+      fabController = FabController(
+          iconData: FontAwesomeIcons.plus,
+          showFab: false,
+          onPressed: () {
+            bottomSheetController.showBottomSheet(
+              content: PostNewComment(
+                controller: PostNewCommentController(
+                  post: post,
+                  newCommentType: NewCommentType.post,
+                  parentController: this,
+                  user: user,
+                ),
+              ),
+            );
+          });
+      bottomSheetController = InnaforBottomSheetController(
+        scaffoldKey: scaffoldKey,
+        fabController: fabController,
+        context: context,
+        withShadowOverlay: true,
+        showComments: showComments,
+      );
+
+      setScrollListener();
+    }
 
     super.initState();
   }
@@ -234,6 +245,49 @@ class PostPage extends BaseView {
       controller.setProfileImage();
     }
 
+    Widget postImageWidget = controller.post != null
+        ? PostImageContainer(
+            controller: PostImageContainerController(
+                preview: controller.preview,
+                post: controller.post,
+                openReport: () {
+                  DialogContentType dialogType;
+                  if (controller.post.uid != controller.user.id) {
+                    dialogType = DialogContentType.report;
+                  } else {
+                    dialogType = DialogContentType.isOwner;
+                  }
+                  controller.bottomSheetController.showBottomSheet(
+                    content: MainDialog(
+                      controller: MainDialogController(
+                        dialogContentType: dialogType,
+                        divide: true,
+                        reportDialogInfo: ReportDialogInfo(
+                          reportedByUser: controller.user,
+                          reportedUser: User(
+                              id: controller.post.uid,
+                              userName: controller.post.userName),
+                          reportType: ReportType.post,
+                          id: controller.post.id,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                hasLoaded: () {
+                  if (controller.comments.length > 0 && !controller.preview) {
+                    scrollScreen(
+                      height: 300,
+                      controller: controller.scrollController,
+                      timeBeforeAction: 500,
+                    );
+                  }
+                }),
+          )
+        : Container();
+
+    if (controller.preview) return postImageWidget;
+
     return Scaffold(
       key: controller.scaffoldKey,
       backgroundColor: Colors.white,
@@ -268,56 +322,16 @@ class PostPage extends BaseView {
                                 height: ServiceProvider.instance.screenService
                                     .getHeightByPercentage(context, 5),
                               ),
-                        controller.post != null
-                            ? PostImageContainer(
-                                controller: PostImageContainerController(
-                                    post: controller.post,
-                                    openReport: () {
-                                      DialogContentType dialogType;
-                                      if (controller.post.uid !=
-                                          controller.user.id) {
-                                        dialogType = DialogContentType.report;
-                                      } else {
-                                        dialogType = DialogContentType.isOwner;
-                                      }
-                                      controller.bottomSheetController
-                                          .showBottomSheet(
-                                        content: MainDialog(
-                                          controller: MainDialogController(
-                                            dialogContentType: dialogType,
-                                            divide: true,
-                                            reportDialogInfo: ReportDialogInfo(
-                                              reportedByUser: controller.user,
-                                              reportedUser: User(
-                                                  id: controller.post.uid,
-                                                  userName:
-                                                      controller.post.userName),
-                                              reportType: ReportType.post,
-                                              id: controller.post.id,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    hasLoaded: () {
-                                      if (controller.comments.length > 0) {
-                                        scrollScreen(
-                                          height: 300,
-                                          controller:
-                                              controller.scrollController,
-                                          timeBeforeAction: 500,
-                                        );
-                                      }
-                                    }),
-                              )
-                            : Container(),
-                        PostIndicator(
-                          postId: controller.post.id,
-                        ),
+                        postImageWidget,
+                        if (!controller.preview)
+                          PostIndicator(
+                            postId: controller.post.id,
+                            onDone: () => controller.onDone(),
+                          ),
                       ],
                     ),
                   ),
-                  if (controller.post != null) ...[
+                  if (controller.post != null && !controller.preview) ...[
                     PostCommentContainer(
                         controller: controller.containerController),
                   ],

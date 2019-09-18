@@ -102,8 +102,8 @@ class RootPage extends BaseView {
 
     /// Force the app bar to be "white" so that the time,
     /// battery and all those symbols are rendered as black
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.white));
+    // SystemChrome.setSystemUIOverlayStyle(
+    //     SystemUiOverlayStyle(statusBarColor: Colors.white));
 
     /// Make sure that a style is set which is
     /// also based on the dimensions of the context

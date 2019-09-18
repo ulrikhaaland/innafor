@@ -22,11 +22,14 @@ class PostImageController extends BaseController {
 
   double imageWidth;
 
+  bool preview;
+
   PostImageController({
     this.returnImageWidth,
     this.imageList,
     this.imageHeight,
     this.imageWidth,
+    this.preview,
   });
 
   @override
@@ -45,26 +48,29 @@ class PostImage extends BaseView {
     if (!mounted) return Container();
 
     List<Widget> tabBarWidgets = <Widget>[];
-    for (int i = 0; i < controller.imageList.length; i++) {
-      double left = 5;
-      double right = 5;
-      if (i == 0) {
-        left = 10;
-        right = 7.5;
-      }
-      if (i == controller.imageList.length - 1) {
-        right = 10;
-      }
-      tabBarWidgets.add(Expanded(
-        child: Padding(
-          padding: EdgeInsets.only(left: left, right: right),
-          child: Container(
-            color: controller.imageIndex == i
-                ? Colors.white
-                : Color.fromRGBO(0, 0, 0, 0.25),
+
+    if (!controller.preview) {
+      for (int i = 0; i < controller.imageList.length; i++) {
+        double left = 5;
+        double right = 5;
+        if (i == 0) {
+          left = 10;
+          right = 7.5;
+        }
+        if (i == controller.imageList.length - 1) {
+          right = 10;
+        }
+        tabBarWidgets.add(Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(left: left, right: right),
+            child: Container(
+              color: controller.imageIndex == i
+                  ? Colors.white
+                  : Color.fromRGBO(0, 0, 0, 0.25),
+            ),
           ),
-        ),
-      ));
+        ));
+      }
     }
     return Container(
       padding: EdgeInsets.only(
@@ -90,7 +96,7 @@ class PostImage extends BaseView {
               ),
             ),
           ),
-          if (controller.imageHeight != null) ...[
+          if (controller.imageHeight != null && !controller.preview) ...[
             Positioned(
               left: 0,
               top: 0,

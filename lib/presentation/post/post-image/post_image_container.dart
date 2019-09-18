@@ -36,12 +36,14 @@ class PostImageContainerController extends BaseController {
 
   PostImageController postImageController;
 
+  bool preview;
+
   PostContainerController postContainerController;
 
   bool video = false;
 
   PostImageContainerController(
-      {this.hasLoaded, this.post, this.openReport, this.onSave});
+      {this.hasLoaded, this.post, this.openReport, this.onSave, this.preview});
 
   @override
   void initState() {
@@ -86,9 +88,8 @@ class PostImageContainerController extends BaseController {
         imageList.add(AdvancedNetworkImage(post.imgUrlList[i]));
       }
     }
-    postImageController = PostImageController(
-      imageList: imageList,
-    );
+    postImageController =
+        PostImageController(imageList: imageList, preview: preview);
 
     refresh();
   }
@@ -112,6 +113,17 @@ class PostImageContainer extends BaseView {
       fit: FlexFit.loose,
       child: Stack(
         children: <Widget>[
+          // Responsible for loading the images
+          Stack(
+              children: controller.imageList
+                  .map((img) => Container(
+                        height: 0,
+                        width: 0,
+                        child: Image(
+                          image: img,
+                        ),
+                      ))
+                  .toList()),
           controller.video
               ? PostVideo(
                   controller: PostVideoController(),
@@ -119,44 +131,46 @@ class PostImageContainer extends BaseView {
               : controller.imageList != null
                   ? PostImage(controller: controller.postImageController)
                   : Container(),
-          controller.postContainerController != null
-              ? PostContainer(
-                  controller: controller.postContainerController,
-                )
-              : Container(),
-          Positioned(
-            top: 30,
-            right: 30,
-            child: GestureDetector(
-              onTap: () => controller.openReport(),
-              child: Icon(
-                FontAwesomeIcons.ellipsisH,
-                color: Colors.white,
-                size: ServiceProvider
-                    .instance.instanceStyleService.appStyle.iconSizeSmall,
+          if (!controller.preview) ...[
+            controller.postContainerController != null
+                ? PostContainer(
+                    controller: controller.postContainerController,
+                  )
+                : Container(),
+            Positioned(
+              top: 30,
+              right: 30,
+              child: GestureDetector(
+                onTap: () => controller.openReport(),
+                child: Icon(
+                  FontAwesomeIcons.ellipsisH,
+                  color: Colors.white,
+                  size: ServiceProvider
+                      .instance.instanceStyleService.appStyle.iconSizeSmall,
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 80,
-            right: 30,
-            child: GestureDetector(
-              onTap: () {
-                showSnackBar("Innlegget er lagret i dine bokmerker", context);
-                User user = Provider.of<User>(context);
-                user.docRef
-                    .collection("bookmark")
-                    .document(controller.post.id)
-                    .setData({});
-              },
-              child: Icon(
-                FontAwesomeIcons.solidBookmark,
-                color: Colors.white,
-                size: ServiceProvider
-                    .instance.instanceStyleService.appStyle.iconSizeSmall,
+            Positioned(
+              top: 80,
+              right: 30,
+              child: GestureDetector(
+                onTap: () {
+                  showSnackBar("Innlegget er lagret i dine bokmerker", context);
+                  User user = Provider.of<User>(context);
+                  user.docRef
+                      .collection("bookmark")
+                      .document(controller.post.id)
+                      .setData({});
+                },
+                child: Icon(
+                  FontAwesomeIcons.solidBookmark,
+                  color: Colors.white,
+                  size: ServiceProvider
+                      .instance.instanceStyleService.appStyle.iconSizeSmall,
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

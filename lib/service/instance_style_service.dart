@@ -247,7 +247,7 @@ class InstanceStyleService {
 
     _appStyle.activeIconColor = _appStyle.mountbattenPink;
 
-    _appStyle.inactiveIconColor = _appStyle.paleSilver;
+    _appStyle.inactiveIconColor = Colors.grey;
 
     _defaultAppStyle = _appStyle;
 

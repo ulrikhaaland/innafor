@@ -57,53 +57,57 @@ class PostCommentContainer extends BaseView {
       //         .getHeightByPercentage(context, 10),
       child: Column(
         children: <Widget>[
-          InkWell(
-            onTap: () {
-              double height;
-              controller.showComments = !controller.showComments;
-              controller.show(controller.showComments);
-              controller.setState(() {});
-              if (controller.showComments) {
-                controller.postPageController.deviceHeight > 750
-                    ? height = ServiceProvider.instance.screenService
-                        .getHeightByPercentage(context, 85)
-                    : height = ServiceProvider.instance.screenService
-                        .getHeightByPercentage(context, 100);
-              } else {
-                height = 0;
-              }
-              scrollScreen(
-                  height: height,
-                  controller: controller.postPageController.scrollController,
-                  timeBeforeAction: 100);
-            },
-            child: Card(
-              color:
-                  ServiceProvider.instance.instanceStyleService.appStyle.leBleu,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12))),
-              child: Container(
-                height: ServiceProvider.instance.screenService
-                    .getHeightByPercentage(context, 5),
-                // width: ServiceProvider.instance.screenService
-                //     .getWidthByPercentage(context, 50),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      controller.showComments
-                          ? Icons.arrow_drop_up
-                          : Icons.arrow_drop_down,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      controller.showComments
-                          ? "Skjul ${controller.postPageController.comments.where((c) => c.isChildOfId == null).length} kommentarer"
-                          : "Vis ${controller.postPageController.comments.where((c) => c.isChildOfId == null).length} kommentarer",
-                      style: ServiceProvider
-                          .instance.instanceStyleService.appStyle.body1,
-                    ),
-                  ],
+          Container(
+            width: ServiceProvider.instance.screenService
+                .getWidthByPercentage(context, 93),
+            child: InkWell(
+              onTap: () {
+                double height;
+                controller.showComments = !controller.showComments;
+                controller.show(controller.showComments);
+                controller.setState(() {});
+                if (controller.showComments) {
+                  controller.postPageController.deviceHeight > 750
+                      ? height = ServiceProvider.instance.screenService
+                          .getHeightByPercentage(context, 85)
+                      : height = ServiceProvider.instance.screenService
+                          .getHeightByPercentage(context, 100);
+                } else {
+                  height = 0;
+                }
+                scrollScreen(
+                    height: height,
+                    controller: controller.postPageController.scrollController,
+                    timeBeforeAction: 100);
+              },
+              child: Card(
+                color: ServiceProvider
+                    .instance.instanceStyleService.appStyle.mountbattenPink,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12))),
+                child: Container(
+                  height: ServiceProvider.instance.screenService
+                      .getHeightByPercentage(context, 5),
+                  // width: ServiceProvider.instance.screenService
+                  //     .getWidthByPercentage(context, 50),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        controller.showComments
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        controller.showComments
+                            ? "Skjul ${controller.postPageController.comments.where((c) => c.isChildOfId == null).length} kommentarer"
+                            : "Vis ${controller.postPageController.comments.where((c) => c.isChildOfId == null).length} kommentarer",
+                        style: ServiceProvider
+                            .instance.instanceStyleService.appStyle.body1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

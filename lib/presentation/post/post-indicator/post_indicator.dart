@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:innafor/model/user.dart';
 import 'package:innafor/service/service_provider.dart';
+import 'package:provider/provider.dart';
 
 class PostIndicator extends StatelessWidget {
   final String postId;
@@ -11,7 +13,9 @@ class PostIndicator extends StatelessWidget {
 
   double value;
 
-  PostIndicator({Key key, this.postId}) : super(key: key);
+  final VoidCallback onDone;
+
+  PostIndicator({Key key, this.postId, this.onDone}) : super(key: key);
 
   void timer() {
     Timer(Duration(seconds: 5), () => hasMoved = false);
@@ -23,7 +27,7 @@ class PostIndicator extends StatelessWidget {
       stream: Firestore.instance.collection('post/$postId/reviews').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Text("Loading..");
+          return Container();
         }
         if (!hasMoved) {
           value = 0;
@@ -37,6 +41,16 @@ class PostIndicator extends StatelessWidget {
               .getWidthByPercentage(context, 100),
           child: InnaforSlider(
             hasMoved: hasMoved,
+            onDone: () {
+              User user = Provider.of<User>(context);
+              Firestore.instance
+                  .document("post/$postId/reviews/${user.id}")
+                  .setData({
+                "uid": user.id,
+                "value": value,
+                "timestamp": DateTime.now(),
+              });
+            },
             moved: (val) {
               value = val;
               hasMoved = true;
@@ -55,9 +69,11 @@ class InnaforSlider extends StatefulWidget {
 
   final void Function(double val) moved;
 
+  final VoidCallback onDone;
+
   bool hasMoved;
 
-  InnaforSlider({Key key, this.value, this.moved, this.hasMoved})
+  InnaforSlider({Key key, this.value, this.moved, this.hasMoved, this.onDone})
       : super(key: key);
   @override
   _InnaforSliderState createState() => _InnaforSliderState();
@@ -67,9 +83,11 @@ class _InnaforSliderState extends State<InnaforSlider> {
   @override
   Widget build(BuildContext context) {
     return Slider(
-      divisions: 10,
+      onChangeEnd: (val) => widget.onDone(),
+      divisions: 50,
       activeColor: widget.hasMoved
-          ? ServiceProvider.instance.instanceStyleService.appStyle.imperial
+          ? ServiceProvider
+              .instance.instanceStyleService.appStyle.mountbattenPink
           : ServiceProvider.instance.instanceStyleService.appStyle.textGrey,
       max: 5,
       value: widget.value,

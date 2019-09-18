@@ -28,8 +28,8 @@ class Fab extends BaseView {
   Widget build(BuildContext context) {
     if (controller.showFab)
       return FloatingActionButton(
-        backgroundColor:
-            ServiceProvider.instance.instanceStyleService.appStyle.leBleu,
+        backgroundColor: ServiceProvider
+            .instance.instanceStyleService.appStyle.mountbattenPink,
         child: Icon(
           controller.iconData ?? FontAwesomeIcons.solidComment,
           color: Colors.white,

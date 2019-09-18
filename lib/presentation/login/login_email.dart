@@ -113,6 +113,7 @@ class EmailLogin extends BaseView {
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: ServiceProvider
               .instance.instanceStyleService.appStyle.backgroundColor,
           elevation: 0,

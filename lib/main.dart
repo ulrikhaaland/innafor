@@ -12,7 +12,7 @@ Future main() async {
   Color bg = Color.fromARGB(255, 105, 48, 109);
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.white, //top bar color
+    statusBarColor: Color.fromRGBO(243, 246, 251, 1), //top bar color
     statusBarIconBrightness: Brightness.dark, //top bar icons
     systemNavigationBarColor: Colors.white, //bottom bar color
     systemNavigationBarIconBrightness: Brightness.dark, //bottom bar icons

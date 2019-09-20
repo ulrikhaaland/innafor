@@ -47,8 +47,9 @@ class PostImageContainerController extends BaseController {
 
   @override
   void initState() {
-    if (post.imgUrlList.isNotEmpty) getImages();
+    // if (!preview) setContainerCtrlr();
 
+    if (post.imgUrlList.isNotEmpty) getImages();
     super.initState();
   }
 
@@ -74,7 +75,7 @@ class PostImageContainerController extends BaseController {
               postImageController.imageWidth = imageWidth;
               postImageController.imageHeight = imageHeight;
 
-              setContainerCtrlr();
+              // if (!preview) setContainerCtrlr();
 
               refresh();
 
@@ -94,12 +95,13 @@ class PostImageContainerController extends BaseController {
     refresh();
   }
 
-  setContainerCtrlr() {
-    postContainerController = PostContainerController(
-      post: post,
-      imageWidth: imageWidth,
-    );
-  }
+  // setContainerCtrlr() {
+  //   postContainerController = PostContainerController(
+  //     post: post,
+  //     imageWidth: 271.5977142857143,
+  //     //  imageWidth,
+  //   );
+  // }
 }
 
 class PostImageContainer extends BaseView {
@@ -109,6 +111,23 @@ class PostImageContainer extends BaseView {
 
   @override
   Widget build(BuildContext context) {
+    controller.imageHeight = getContainerSize(
+      key: controller.postImageController.imageSizeKey,
+      width: false,
+    );
+
+    controller.imageWidth = getContainerSize(
+      key: controller.postImageController.imageSizeKey,
+      width: true,
+    );
+
+    if (controller.postContainerController == null)
+      controller.postContainerController = PostContainerController(
+        post: controller.post,
+        imageWidth: 271.5977142857143,
+        //  imageWidth,
+      );
+
     return Flexible(
       fit: FlexFit.loose,
       child: Stack(

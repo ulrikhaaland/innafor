@@ -20,7 +20,7 @@ class PostDictatorController extends BaseController {
 
   List<Circle> circles;
 
-  PostPageController theController;
+  PostPage thePostPage;
 
   PostDictatorController({this.auth, this.user});
 
@@ -37,7 +37,7 @@ class PostDictatorController extends BaseController {
     circlesSnap.documents.forEach((circleDoc) async {
       Circle circle = Circle.fromJson(circleDoc.data);
 
-      circle.postPageCtrlrs = <PostPage>[];
+      circle.postPages = <PostPage>[];
 
       circle.postIds = <String>[];
 
@@ -58,16 +58,24 @@ class PostDictatorController extends BaseController {
   }
 
   checkCircle({Circle circle}) async {
-    while (circle.postPageCtrlrs.length < 5) {
-      if (circle.postIds.length >= circle.postPageCtrlrs.length) {
-        circle.postPageCtrlrs.add(PostPageController(
-          preview: true,
-          post: await PostProvider().providePost(circle.postIds[0]),
-          comments: await CommentProvider().provideComments(circle.postIds[0]),
-          onDone: () => setState(() {
-            circle.postPageCtrlrs.removeAt(0);
-          }),
-        ));
+    while (circle.postPages.length < 5) {
+      if (circle.postIds.length >= circle.postPages.length) {
+        circle.postPages.add(
+          PostPage(
+            key: Key(circle.postIds[0]),
+            controller: PostPageController(
+              preview: true,
+              post: await PostProvider().providePost(circle.postIds[0]),
+              comments:
+                  await CommentProvider().provideComments(circle.postIds[0]),
+              onDone: () => setState(
+                () {
+                  circle.postPages.removeAt(0);
+                },
+              ),
+            ),
+          ),
+        );
 
         circle.postIds.removeAt(0);
       } else {
@@ -88,7 +96,7 @@ class PostDictatorPage extends BaseView {
   Widget build(BuildContext context) {
     if (!mounted) return Container();
 
-    if (controller.circles[0].postPageCtrlrs.isEmpty)
+    if (controller.circles[0].postPages.isEmpty)
       return Container(
         color: Colors.white,
       );
@@ -97,10 +105,7 @@ class PostDictatorPage extends BaseView {
 
     // controller.auth.signOut();
 
-    if (controller.theController != null)
-      return PostPage(
-        controller: controller.theController,
-      );
+    if (controller.thePostPage != null) return controller.thePostPage;
 
     return Scaffold(
       bottomNavigationBar: Container(
@@ -196,23 +201,22 @@ class PostDictatorPage extends BaseView {
                       scrollDirection: Axis.horizontal,
                       itemCount: 1,
                       itemBuilder: (context, index) {
-                        PostPageController postPageController =
-                            circle.postPageCtrlrs[0];
+                        PostPage postPage = circle.postPages[0];
                         return Container(
                           width: ServiceProvider.instance.screenService
                               .getWidthByPercentage(context, 70),
                           child: GestureDetector(
                             onTap: () {
-                              postPageController.preview = false;
-                              controller.theController = postPageController;
-                              controller.refresh();
+                              postPage.controller.preview = false;
+                              controller.setState(() {
+                                postPage.controller.disposable = false;
+                                controller.thePostPage = postPage;
+                              });
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => postPage));
                             },
                             child: Column(
-                              children: <Widget>[
-                                PostPage(
-                                  controller: postPageController,
-                                ),
-                              ],
+                              children: <Widget>[postPage],
                             ),
                           ),
                         );
@@ -226,8 +230,8 @@ class PostDictatorPage extends BaseView {
     );
 
     // return PostPage(
-    //   key: Key(controller.postPageCtrlrs[0].post.id),
-    //   controller: controller.postPageCtrlrs[0],
+    //   key: Key(controller.postPages[0].post.id),
+    //   controller: controller.postPages[0],
     // );
   }
 }

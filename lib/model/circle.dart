@@ -8,14 +8,14 @@ part 'circle.g.dart';
 class Circle {
   Circle({this.title, this.postIds}) {
     this.postIds = [];
-    this.postPageCtrlrs = [];
+    this.postPages = [];
   }
 
   String title;
   @JsonKey(ignore: true)
   List<String> postIds;
   @JsonKey(ignore: true)
-  List<PostPage> postPageCtrlrs;
+  List<PostPage> postPages;
   @JsonKey(ignore: true)
   DocumentReference docRef;
 

@@ -14,7 +14,8 @@ Future main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Color.fromRGBO(243, 246, 251, 1), //top bar color
     statusBarIconBrightness: Brightness.dark, //top bar icons
-    systemNavigationBarColor: Colors.white, //bottom bar color
+    systemNavigationBarColor:
+        Color.fromRGBO(243, 246, 251, 1), //bottom bar color
     systemNavigationBarIconBrightness: Brightness.dark, //bottom bar icons
   ));
   ServiceProvider.instance.screenService = ScreenService();

@@ -32,7 +32,7 @@ class PostPageController extends BaseController
     implements PostActionController {
   GlobalKey imageSizeKey = GlobalKey();
 
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> scaffoldKey;
 
   ScrollController scrollController = ScrollController();
 
@@ -70,12 +70,15 @@ class PostPageController extends BaseController
 
   Widget x;
 
+  bool disposable = true;
+
   User user;
 
   PostPageController(
       {@required this.post, this.comments, this.onDone, this.preview});
   @override
   void initState() {
+    scaffoldKey = GlobalKey<ScaffoldState>();
     postImageContainer = PostImageContainer();
     containerController = PostCommentContainerController(
       actionController: this,
@@ -118,9 +121,11 @@ class PostPageController extends BaseController
 
   @override
   void dispose() {
-    scrollController?.dispose();
-    scaffoldKey.currentState?.dispose();
-    super.dispose();
+    if (disposable) {
+      scrollController?.dispose();
+      scaffoldKey.currentState?.dispose();
+      super.dispose();
+    }
   }
 
   void setScrollListener() {
